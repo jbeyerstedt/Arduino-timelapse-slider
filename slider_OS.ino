@@ -2,16 +2,22 @@
 // version 0.1
 // Jannik Beyerstedt
 
+// #1 toDo: convert input values - then movie mode at setTriggerTime == 0
+
 // debug variables
 int delayVal = 20;
 int numberLimitSlideTime = 30;
 int numberLimitTriggerTime = 10;
 
-// constants for the slider
-int triggerDuration = 500;
-int maxSteps = 400;
+// constants for the slider (mechanical)
+int triggerDuration = 500;  // how long should your camera be triggered (exposure time is still set in camera)
+int maxSteps = 400;         // amount of steps to slide the slider along
+int workingDelay = 2;       // time to execute one the slide code in ms
 
 // setup I/O and helper integers
+const int trigger = 2;
+// const int servoTilt = 3;
+
 const int shiftLatch = 12; // RCK (register clock)
 const int shiftClock = 9; // SCK (shift clock)
 const int shiftData = 8; // SI (serial in) 
@@ -33,9 +39,6 @@ int lastEnter = 0;
 
 int choosenNumber = 0;
 
-const int trigger = 2;
-// const int servoTilt = 3;
-
 // values before conversion
 int setSlideTime = 0;
 int slideDirection = 0; // 0 = right, 1 = left
@@ -54,7 +57,8 @@ int totalStepCounter = 0;
 int intervalStepCounter = 0;
 
 // converted values
-int stepsPerInterval = 0;
+int slideStepsPerInterval = 0;
+int slideStepDelay = 0;
 
 void setup() {
   pinMode(ledPin, OUTPUT);
@@ -72,20 +76,15 @@ void setup() {
   
   digitalWrite(stepperSleep, LOW); // set stepper driver to sleep
   
-  digitalWrite(shiftLatch, LOW);
-  shiftOut(shiftData, shiftClock, MSBFIRST, 126); // decimals
-  shiftOut(shiftData, shiftClock, MSBFIRST, 222); // ones
-  digitalWrite(shiftLatch, HIGH);
-  
   Serial.begin(9600);
-  
 }
 
 void loop() {
   displayNumber(111);
-  // setup all the parameters
-  while (loop1SetupHelper == 0){   // set slideTime
-    
+  
+// SETUP all the parameters
+// LOOP 1
+  while (loop1SetupHelper == 0){// set slideTime
     readValuePlus = digitalRead(buttonPlus);
     delay(delayVal);
     if (readValuePlus == HIGH && lastPlus != readValuePlus){
@@ -93,10 +92,7 @@ void loop() {
       if(choosenNumber < 0) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 0;}
       displayNumber(choosenNumber);
       lastPlus = readValuePlus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setSlideTime: "); Serial.println(choosenNumber);
-    }
+      delay(delayVal);}
     if (readValuePlus == LOW && lastPlus != readValuePlus) {
       lastPlus = readValuePlus; delay (delayVal);}
     
@@ -107,10 +103,7 @@ void loop() {
       if(choosenNumber < 0) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 0;}
       displayNumber(choosenNumber);
       lastMinus = readValueMinus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setSlideTime: "); Serial.println(choosenNumber);
-    }
+      delay(delayVal);}
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
@@ -123,16 +116,12 @@ void loop() {
       lastEnter = readValueEnter;
       loop1SetupHelper = 1; // kick me out of the 1st setup loop
       delay(delayVal);
-      
-      // for debug
-      Serial.print("setSlideTime entered: "); Serial.println(setSlideTime);
-    }
+      Serial.print("setSlideTime entered: "); Serial.println(setSlideTime);}
     if (readValueEnter == LOW && lastEnter != readValueEnter) {
     lastEnter = readValueEnter; delay(delayVal);}   
   }
   
-  
-  
+// LOOP 2  
   while (loop2SetupHelper == 0){   // set slideDirection
     readValuePlus = digitalRead(buttonPlus);
     delay(delayVal);
@@ -140,10 +129,7 @@ void loop() {
       slideDirection = 1; // right
       displayNumber(100+slideDirection);
       lastPlus = readValuePlus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setSlideDirection: "); Serial.println(slideDirection);
-    }
+      delay(delayVal);}
     if (readValuePlus == LOW && lastPlus != readValuePlus) {
       lastPlus = readValuePlus; delay (delayVal);}
     
@@ -153,10 +139,7 @@ void loop() {
       slideDirection = 0; // left
       displayNumber(100+slideDirection);
       lastMinus = readValueMinus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setSlideDirection: "); Serial.println(slideDirection);
-    }
+      delay(delayVal);}
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
@@ -167,16 +150,12 @@ void loop() {
       lastEnter = readValueEnter;
       loop2SetupHelper = 1; // kick me out of the 2nd setup loop
       delay(delayVal);
-      
-      // for debug
-      Serial.print("SlideDirection entered: "); Serial.println(slideDirection);
-    }
+      Serial.print("SlideDirection entered: "); Serial.println(slideDirection);}
     if (readValueEnter == LOW && lastEnter != readValueEnter) {
     lastEnter = readValueEnter; delay(delayVal);}
   }
   
-  
-  
+// LOOP 3
   while (loop3SetupHelper == 0){   // set triggerTime
     readValuePlus = digitalRead(buttonPlus);
     delay(delayVal);
@@ -185,10 +164,7 @@ void loop() {
       if(choosenNumber < 0) {choosenNumber = numberLimitTriggerTime;} if(choosenNumber > numberLimitTriggerTime) {choosenNumber = 0;}
       displayNumber(choosenNumber);
       lastPlus = readValuePlus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setTriggerTime: "); Serial.println(choosenNumber);
-    }
+      delay(delayVal);}
     if (readValuePlus == LOW && lastPlus != readValuePlus) {
       lastPlus = readValuePlus; delay (delayVal);}
     
@@ -199,10 +175,7 @@ void loop() {
       if(choosenNumber < 0) {choosenNumber = numberLimitTriggerTime;} if(choosenNumber > numberLimitTriggerTime) {choosenNumber = 0;}
       displayNumber(choosenNumber);
       lastMinus = readValueMinus;
-      delay(delayVal);
-      // for debug
-      Serial.print("setTriggerTime: "); Serial.println(choosenNumber);
-    }
+      delay(delayVal);}
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
@@ -215,38 +188,52 @@ void loop() {
       lastEnter = readValueEnter;
       loop3SetupHelper = 1; // kick me out of the 3rd setup loop
       delay(delayVal);
-      
-      // for debug
-      Serial.print("setTriggerTime entered: "); Serial.println(setTriggerTime);
-    }
+      Serial.print("setTriggerTime entered: "); Serial.println(setTriggerTime);}
     if (readValueEnter == LOW && lastEnter != readValueEnter) {
     lastEnter = readValueEnter; delay(delayVal);}
   }
   
-  // prepare some variables (at this time because of a second loop run)
+  
+// CONVERT the input values
+// LOOP 4
+  while (loop4ConvertHelper == 0) {
+    /*
+    
+    // maxSteps / setSlideTime [min] * 60 [sek/min] = stepsPerSecond
+    // 1000 [ms] / stepsPerSecond = timePerStep [ms/step]
+    int stepsPerSecond = maxSteps / setSlideTime * 60;
+    int timePerStep = 1000 / stepsPerSecond;
+    slideStepDelay = timePerStep - workingDelay  
+  
+    if (setTriggerTime == 0) { // movie mode
+      slideStepsPerInterval = maxSteps;
+    }
+    else if { // normal timelapse operation
+      
+    }
+    
+    */
+        
+    // code for testing
+    slideStepsPerInterval = setSlideTime * 50;
+    slideStepDelay = setTriggerTime;
+    // end code for testing
+    
+    loop4ConvertHelper ++;
+    Serial.println("converted");
+   }
+   
+  // prepare some more variables (at this time because of a second loop run)
   int waitHepler = 0;
   int wakeupHelper = 0;
   int displaySlideHelper = 0;
   
-  // CONVERT
-  // startParameter umrechnen !!
-  while (loop4ConvertHelper == 0) {
-    // code
-    // stepsPerInterval = 100; // oder was auch immer errechnet wird
-    
-    stepsPerInterval = setSlideTime * 40; // code for testing
-    
-    loop4ConvertHelper ++;
-    
-    // for debug
-    Serial.println("converted");
-  }
   
-  // WAIT FOR START
+// WAIT FOR START
+// LOOP 4 wait
   while (loop4WaitStart == 0) {
-    for (waitHepler = 0; waitHepler == 0; waitHepler++) { // display wait-code only once
-      displayNumber(102);
-    }
+    for (waitHepler = 0; waitHepler == 0; waitHepler++) { // display wait-sign only once in this loop
+      displayNumber(102);}
     
     readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
@@ -254,62 +241,51 @@ void loop() {
       lastEnter = readValueEnter;
       loop4WaitStart ++;
       delay(delayVal);
-      
-      // for debug
-      Serial.println("started: ");
-    }
+      Serial.println("started");}
     if (readValueEnter == LOW && lastEnter != readValueEnter) {
-    lastEnter = readValueEnter; delay(delayVal);}
+      lastEnter = readValueEnter; delay(delayVal);}
   }
   
-  // DO THE SLIDE
+// DO THE SLIDE
+// LOOP 5
   while (totalStepCounter <= maxSteps && loop5AbortSlide == 0) {
     
     // wake up stepper driver and set direction only once
     for (wakeupHelper = 0; wakeupHelper == 0; wakeupHelper++) {digitalWrite(stepperSleep, HIGH); delay(50); digitalWrite(stepperDir, slideDirection);}
-    
-    // display slide symbol only at beginning a slide inerval
+    // display slide symbol only at beginning of the slide inerval
     for (displaySlideHelper = 0; displaySlideHelper == 0; displaySlideHelper ++) {displayNumber(103);}
     
-    if (intervalStepCounter < stepsPerInterval) {
-      // do one Step
+    // step trigger interval
+    if (intervalStepCounter < slideStepsPerInterval) { // step
       digitalWrite(stepperStep, HIGH);
-      delay(15);
+      delay(slideStepDelay);
       digitalWrite(stepperStep, LOW);
-      
       intervalStepCounter ++;
       totalStepCounter ++;}
-    else {
+    else if (setTriggerTime >= 1) { // trigger if setTriggerTime is not 0
       displayNumber(104);
       digitalWrite(trigger, HIGH);
       delay (triggerDuration);
       digitalWrite(trigger, LOW);
       intervalStepCounter = 0;
       displaySlideHelper = 0;}
+    else {                          // do not trigger in movie mode (setTriggerTime == 0)
+      intervalStepCounter = 0;}
     
+    // abort the slide with enter button
     readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
       lastEnter = readValueEnter;
       loop5AbortSlide ++;
       delay(delayVal);
-      
-      // for debug
-      Serial.println("escape the slide");
-    }
+      Serial.println("escape the slide");}
     if (readValueEnter == LOW && lastEnter != readValueEnter) {
     lastEnter = readValueEnter; delay(delayVal);}
-    
   }
   
-  // END, RESET VALUES FOR ANOTHER START
-  if (slideDirection == 0) {
-    slideDirection = 1;
-  }
-  if (slideDirection == 1) {
-    slideDirection = 0;
-  }
-  
+// END and RESET VALUES FOR ANOTHER START
+  slideDirection = !slideDirection;
   loop1SetupHelper = 0;
   loop2SetupHelper = 0;
   loop3SetupHelper = 0;
@@ -319,65 +295,40 @@ void loop() {
   totalStepCounter = 0;
   intervalStepCounter = 0;
   
-  // set steper driver to sleep
-  digitalWrite(stepperSleep, LOW);
+  digitalWrite(stepperSleep, LOW); // set steper driver to sleep
   
-  // for debug
   Serial.println("reset");
+
 }
 
 
 
 
 // method for displaying a 2 digit number with 2 shift registers
-// for special characters see the code annotations itself
-// one decimal Point and an eight ist the error for a too big number > 99
+// for special symbols see the code annotations itself
 
 void displayNumber (int displayNum) {
   int NumPartTens = 0;  // 10, 20, ...
   int NumPartOnes = 0; // 1, 2, ...
-  int TensArray[10] = {126, 6, 188, 158, 198, 218, 242, 14, 254, 206};
-  int OnesArray[10] = {222, 12, 182, 62, 108, 122, 248, 14, 254, 110};
+  int TensArray[12] = {126, 6, 188, 158, 198, 218, 242, 14, 254, 206, 0, 1}; // 0 - 9 + clear + DP
+  int OnesArray[12] = {222, 12, 182, 62, 108, 122, 248, 14, 254, 110, 0, 1}; // 0 - 9 + clear + DP
   
-  if (displayNum == 111) { 
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 17);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 17);
-    digitalWrite(shiftLatch, HIGH);
-  }
-  else if (displayNum == 100){ // slide direction 0
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 48);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 0);
-    digitalWrite(shiftLatch, HIGH);
-  }
-  else if (displayNum == 101){ // slide direction 1
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 0);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 6);
-    digitalWrite(shiftLatch, HIGH);
-  }
+  // special symbols
+  if (displayNum == 111) { // value entered symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 17); shiftOut(shiftData, shiftClock, MSBFIRST, 17); digitalWrite(shiftLatch, HIGH);}
+  else if (displayNum == 100){ // slide direction 0 (left) symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 48); shiftOut(shiftData, shiftClock, MSBFIRST, 0); digitalWrite(shiftLatch, HIGH);}
+  else if (displayNum == 101){ // slide direction 1 (right) symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 0); shiftOut(shiftData, shiftClock, MSBFIRST, 6); digitalWrite(shiftLatch, HIGH);}
   else if (displayNum == 102){ // wait for an input (Go)
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 250);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 184);
-    digitalWrite(shiftLatch, HIGH);
-  }
-  else if (displayNum == 103){ // slide
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 224);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 44);
-    digitalWrite(shiftLatch, HIGH);
-  }
-  else if (displayNum == 104){ // trigger
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 184);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 30);
-    digitalWrite(shiftLatch, HIGH);
-  }
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 250); shiftOut(shiftData, shiftClock, MSBFIRST, 184); digitalWrite(shiftLatch, HIGH);}
+  else if (displayNum == 103){ // slide symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 160); shiftOut(shiftData, shiftClock, MSBFIRST, 40); digitalWrite(shiftLatch, HIGH);}
+  else if (displayNum == 104){ // trigger symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 120); shiftOut(shiftData, shiftClock, MSBFIRST, 30); digitalWrite(shiftLatch, HIGH);}
   
   else if (displayNum <= 99) {
-    if (displayNum < 10) {NumPartTens = 0;}
+    if (displayNum < 10) {NumPartTens = 10;}
     else {NumPartTens = displayNum / 10;}
     NumPartOnes = displayNum % 10;
     
