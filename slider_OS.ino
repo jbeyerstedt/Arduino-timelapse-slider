@@ -47,6 +47,7 @@ int loop2SetupHelper = 0;
 int loop3SetupHelper = 0;
 int loop4ConvertHelper = 0;
 int loop4WaitStart = 0;
+int loop5AbortSlide = 0;
 
 // counters for THE SLIDE
 int totalStepCounter = 0;
@@ -225,6 +226,7 @@ void loop() {
   // prepare some variables (at this time because of a second loop run)
   int waitHepler = 0;
   int wakeupHelper = 0;
+  int displaySlideHelper = 0;
   
   // CONVERT
   // startParameter umrechnen !!
@@ -261,14 +263,13 @@ void loop() {
   }
   
   // DO THE SLIDE
-  while (totalStepCounter <= maxSteps) {
-    displayNumber(103);
+  while (totalStepCounter <= maxSteps && loop5AbortSlide == 0) {
     
-    for (wakeupHelper = 0; wakeupHelper == 0; wakeupHelper++) { // wake up stepper driver and set direction only once
-      digitalWrite(stepperSleep, HIGH);
-      delay(50);
-      digitalWrite(stepperDir, slideDirection);
-    }
+    // wake up stepper driver and set direction only once
+    for (wakeupHelper = 0; wakeupHelper == 0; wakeupHelper++) {digitalWrite(stepperSleep, HIGH); delay(50); digitalWrite(stepperDir, slideDirection);}
+    
+    // display slide symbol only at beginning a slide inerval
+    for (displaySlideHelper = 0; displaySlideHelper == 0; displaySlideHelper ++) {displayNumber(103);}
     
     if (intervalStepCounter < stepsPerInterval) {
       // do one Step
@@ -277,15 +278,28 @@ void loop() {
       digitalWrite(stepperStep, LOW);
       
       intervalStepCounter ++;
-      totalStepCounter ++;
-    }
+      totalStepCounter ++;}
     else {
       displayNumber(104);
       digitalWrite(trigger, HIGH);
       delay (triggerDuration);
       digitalWrite(trigger, LOW);
       intervalStepCounter = 0;
+      displaySlideHelper = 0;}
+    
+    readValueEnter = digitalRead(buttonEnter);
+    delay(delayVal);
+    if (readValueEnter == HIGH && lastEnter != readValueEnter){
+      lastEnter = readValueEnter;
+      loop5AbortSlide ++;
+      delay(delayVal);
+      
+      // for debug
+      Serial.println("escape the slide");
     }
+    if (readValueEnter == LOW && lastEnter != readValueEnter) {
+    lastEnter = readValueEnter; delay(delayVal);}
+    
   }
   
   // END, RESET VALUES FOR ANOTHER START
@@ -301,6 +315,7 @@ void loop() {
   loop3SetupHelper = 0;
   loop4ConvertHelper = 0;
   loop4WaitStart = 0;
+  loop5AbortSlide = 0;
   totalStepCounter = 0;
   intervalStepCounter = 0;
   
@@ -315,7 +330,7 @@ void loop() {
 
 
 // method for displaying a 2 digit number with 2 shift registers
-// 101: display shows two decimal points
+// for special characters see the code annotations itself
 // one decimal Point and an eight ist the error for a too big number > 99
 
 void displayNumber (int displayNum) {
@@ -326,38 +341,38 @@ void displayNumber (int displayNum) {
   
   if (displayNum == 111) { 
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 1);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 1);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 17);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 17);
     digitalWrite(shiftLatch, HIGH);
   }
   else if (displayNum == 100){ // slide direction 0
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 178);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 144);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 48);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 0);
     digitalWrite(shiftLatch, HIGH);
   }
   else if (displayNum == 101){ // slide direction 1
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 178);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 0);
     shiftOut(shiftData, shiftClock, MSBFIRST, 6);
     digitalWrite(shiftLatch, HIGH);
   }
-  else if (displayNum == 102){ // wait for an input
+  else if (displayNum == 102){ // wait for an input (Go)
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 128);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 40);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 250);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 184);
     digitalWrite(shiftLatch, HIGH);
   }
   else if (displayNum == 103){ // slide
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 8);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 2);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 224);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 44);
     digitalWrite(shiftLatch, HIGH);
   }
   else if (displayNum == 104){ // trigger
     digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 1);
-    shiftOut(shiftData, shiftClock, MSBFIRST, 0);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 184);
+    shiftOut(shiftData, shiftClock, MSBFIRST, 30);
     digitalWrite(shiftLatch, HIGH);
   }
   
