@@ -1,5 +1,5 @@
-# arduino timelapse kamera slider
-This is the readme for the project and code itself, for a user manual check user_readme.md, the electronically setup is under electronics.md
+# arduino timelapse camera slider
+This is the readme for the project and code itself, for a user manual check user_readme.md, the electronically setup is under electronics.md  
 Dieses readme beschäftigt sich mit dem Projekt und Code an sich, eine Bedienungsanleitung findet sich unter user_readme.md, die Elektronik und alles andere technische drum herum ist in electronics.md zusammengefasst.
 
 ## introduction / Einleitung
@@ -34,5 +34,5 @@ Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auc
 
 
 #### additional in version 2.0
-* movie mode (perhaps at entering trigger interval 0 ) with a constant or s-curve slide
+* movie mode (perhaps at entering trigger interval 0) with a constant or s-curve slide
 * a servo motor for tiling the camera
