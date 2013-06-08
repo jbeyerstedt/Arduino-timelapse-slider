@@ -1,0 +1,47 @@
+7-SEGMENT-DISPLAY to SHIFT REGISTER
+
+-- segments of the display
+
+|-a-|
+f   b
+|-g-|
+e   c
+|-d-| DP
+
+
+-- digit segment to decimal bit
+
+segment	Tens	binary		Ones	binary
+
+ a	8	B00001000	2	B00000010
+ b	4	B00000100	4	B00000100
+ c	2	B00000010	8	B00001000
+ d	16	B00010000	16	B00010000
+ e	32	B00100000	128	B10000000
+ f	64	B01000000	64	B01000000
+ g	128	B10000000	32	B00100000
+ DP	1	B00000001	1	B00000001
+
+
+-- number to segments to decimal byte
+
+0	abcdef   	126	126
+1	 bc      	 12	  6
+2	ab de g  	182	188
+3	abcd  g  	158	128
+4	 bc  fg  	204	198
+5	a cd fg  	218	218
+6	  cdefg  	248	242
+7	abc      	 14	 14
+8	abcdefg  	254	254
+9	abc  fg  	222	222
+
+ERROR and other signs	
+
+201 error1:	       DP , a  d     	1	18	too big number
+111 twoDots	  d    DP ,    d   DP	17	17	two underscores and two dots
+100 dir0:	  de      ,      	48	0	left:  Pfeil links unten
+101 dir1:	          , ab    	0	6	right: Pfeil rechts oben 
+102 wait:	a cdefg   ,   cde g 	250	184	Go
+103 slide	    e g   ,   c   g  	160	40	,--,
+104 trigger	a  def    , abcd      	120	30	big circle, segments at the border
