@@ -1,9 +1,12 @@
 // slider OS
-// version 0.3
-// Jannik Beyerstedt
+// version 1.0.1
+// Jannik Beyerstedt, Hamburg, Germany | jtByt-Pictures.de | jtByt.Pictures@gmail.com
+// CC BY-NC-SA 3.0
 
 // debug variables
 int delayVal = 20;
+
+// display variables
 int numberLimitSlideTime = 30;    // maximum time input to slide (in minutes)
 int numberLimitTriggerTime = 10;  // maximum trigger interval time (in seconds)
 
@@ -38,7 +41,7 @@ int lastEnter = 0;
 int choosenNumber = 0;
 
 // values before conversion
-int setSlideTime = 0;
+int setSlideTime = 1;
 int slideDirection = 0; // 0 = right, 1 = left
 int setTriggerTime = 0;
 
@@ -89,7 +92,7 @@ void loop() {
     delay(delayVal);
     if (readValuePlus == HIGH && lastPlus != readValuePlus){
       choosenNumber ++;
-      if(choosenNumber < 0) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 0;}
+      if(choosenNumber < 1) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 1;}
       displayNumber(choosenNumber);
       lastPlus = readValuePlus;
       delay(delayVal);}
@@ -100,7 +103,7 @@ void loop() {
     delay(delayVal);
     if (readValueMinus == HIGH && lastMinus != readValueMinus){
       choosenNumber --;
-      if(choosenNumber < 0) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 0;}
+      if(choosenNumber < 1) {choosenNumber = numberLimitSlideTime;} if(choosenNumber > numberLimitSlideTime) {choosenNumber = 1;}
       displayNumber(choosenNumber);
       lastMinus = readValueMinus;
       delay(delayVal);}
@@ -110,6 +113,7 @@ void loop() {
     readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
+      if (choosenNumber == 0) {choosenNumber = 1;} // bugfix: else the calculation will get an division through 0
       setSlideTime = choosenNumber;
       choosenNumber = 0;
       displayNumber(111);
@@ -181,7 +185,7 @@ void loop() {
     
     readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
-    if (readValueEnter == HIGH && lastEnter != readValueEnter){
+    if (readValueEnter == HIGH && lastEnter != readValueEnter){ 
       setTriggerTime = choosenNumber;
       choosenNumber = 0;
       displayNumber(111);
@@ -197,22 +201,21 @@ void loop() {
 // CONVERT the input values
 // LOOP 4
   while (loop4ConvertHelper == 0) {
-    
-    // calculate velocity:
-        
+    // calculate velocity:  
     // maxSteps / setSlideTime [min] * 60 [sek/min] = stepsPerSecond
     // 1000 [ms] / stepsPerSecond = timePerStep [ms/step]
     int stepsPerSecond = maxSteps / setSlideTime / 60;
     int timePerStep = 1000 / stepsPerSecond;
     slideStepDelay = timePerStep - workingDelay;
     if (slideStepDelay <= 1) {slideStepDelay = 1;} // safety that slideStepDelay is not too small
-  
+    
+    // calculate the steps per Interval
     if (setTriggerTime == 0) { // movie mode
       slideStepsPerInterval = maxSteps;
-      Serial.println("movie mode active");
-    }
+      Serial.println("movie mode active");}
     else { // normal timelapse operation
-      // slideStepsPerInterval = stepsPerSecond * setTriggerTime
+      // a too big, but correct caculated number, will make this calculation wrong. The slider isn´t faster than 14 steps per Second 
+      if (stepsPerSecond >= 14) {stepsPerSecond = 14;}
       slideStepsPerInterval = stepsPerSecond * setTriggerTime;
     }
     
@@ -251,7 +254,7 @@ void loop() {
     
     // wake up stepper driver and set direction only once
     for (wakeupHelper = 0; wakeupHelper == 0; wakeupHelper++) {digitalWrite(stepperSleep, HIGH); delay(50); digitalWrite(stepperDir, slideDirection);}
-    // display slide symbol only at beginning of the slide inerval
+    // display slide symbol only at beginning of the slide interval
     for (displaySlideHelper = 0; displaySlideHelper == 0; displaySlideHelper ++) {displayNumber(103);}
     
     // step trigger interval
@@ -268,7 +271,7 @@ void loop() {
       digitalWrite(trigger, LOW);
       intervalStepCounter = 0;
       displaySlideHelper = 0;}
-    else {                          // do not trigger in movie mode (setTriggerTime == 0) (backup-function, because of movie mode in conversion-loop
+    else {                          // do not trigger in movie mode (setTriggerTime == 0) (backup-function, because of movie mode in conversion-loop)
       intervalStepCounter = 0;}
     
     // abort the slide with enter button

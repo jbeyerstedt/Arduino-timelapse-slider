@@ -54,4 +54,10 @@ follows soon / folgt bald
 
 #### additional in version 2.0 (far far away)
 * movie mode (perhaps at entering trigger interval 0) with a constant or s-curve slide
-* a servo motor for tiling the camera
+* a servo motor for tilting the camera
+
+
+## changelog
+* 1.0.1:
+	* setSlideTime=0 will get an division throgh 0 in the caclulation which causes malfunction (because stepsPerInterval will be 0)
+	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
