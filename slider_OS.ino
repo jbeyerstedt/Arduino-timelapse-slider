@@ -1,18 +1,16 @@
 // slider OS
-// version 0.1
+// version 0.3
 // Jannik Beyerstedt
-
-// #1 toDo: convert input values - then movie mode at setTriggerTime == 0
 
 // debug variables
 int delayVal = 20;
-int numberLimitSlideTime = 30;
-int numberLimitTriggerTime = 10;
+int numberLimitSlideTime = 30;    // maximum time input to slide (in minutes)
+int numberLimitTriggerTime = 10;  // maximum trigger interval time (in seconds)
 
 // constants for the slider (mechanical)
 int triggerDuration = 500;  // how long should your camera be triggered (exposure time is still set in camera)
-int maxSteps = 400;         // amount of steps to slide the slider along
-int workingDelay = 2;       // time to execute one the slide code in ms
+int maxSteps = 2200;        // amount of steps to slide the slider along
+int workingDelay = 72;      // time to execute one the slide code in ms (7200 ms for 100 steps measured)
 
 // setup I/O and helper integers
 const int trigger = 2;
@@ -74,6 +72,8 @@ void setup() {
   pinMode(stepperDir, OUTPUT);
   pinMode(stepperSleep, OUTPUT);
   
+  pinMode(trigger, OUTPUT);
+  
   digitalWrite(stepperSleep, LOW); // set stepper driver to sleep
   
   Serial.begin(9600);
@@ -126,7 +126,7 @@ void loop() {
     readValuePlus = digitalRead(buttonPlus);
     delay(delayVal);
     if (readValuePlus == HIGH && lastPlus != readValuePlus){
-      slideDirection = 1; // right
+      slideDirection = 0; // right
       displayNumber(100+slideDirection);
       lastPlus = readValuePlus;
       delay(delayVal);}
@@ -136,7 +136,7 @@ void loop() {
     readValueMinus = digitalRead(buttonMinus);
     delay(delayVal);
     if (readValueMinus == HIGH && lastMinus != readValueMinus){
-      slideDirection = 0; // left
+      slideDirection = 1; // left
       displayNumber(100+slideDirection);
       lastMinus = readValueMinus;
       delay(delayVal);}
@@ -197,29 +197,28 @@ void loop() {
 // CONVERT the input values
 // LOOP 4
   while (loop4ConvertHelper == 0) {
-    /*
     
+    // calculate velocity:
+        
     // maxSteps / setSlideTime [min] * 60 [sek/min] = stepsPerSecond
     // 1000 [ms] / stepsPerSecond = timePerStep [ms/step]
-    int stepsPerSecond = maxSteps / setSlideTime * 60;
+    int stepsPerSecond = maxSteps / setSlideTime / 60;
     int timePerStep = 1000 / stepsPerSecond;
-    slideStepDelay = timePerStep - workingDelay  
+    slideStepDelay = timePerStep - workingDelay;
+    if (slideStepDelay <= 1) {slideStepDelay = 1;} // safety that slideStepDelay is not too small
   
     if (setTriggerTime == 0) { // movie mode
       slideStepsPerInterval = maxSteps;
+      Serial.println("movie mode active");
     }
-    else if { // normal timelapse operation
-      
+    else { // normal timelapse operation
+      // slideStepsPerInterval = stepsPerSecond * setTriggerTime
+      slideStepsPerInterval = stepsPerSecond * setTriggerTime;
     }
-    
-    */
-        
-    // code for testing
-    slideStepsPerInterval = setSlideTime * 50;
-    slideStepDelay = setTriggerTime;
-    // end code for testing
     
     loop4ConvertHelper ++;
+    Serial.print("slideStepDelay: "); Serial.println(slideStepDelay);
+    Serial.print("slideStepsPerInterval: ");Serial.println(slideStepsPerInterval);
     Serial.println("converted");
    }
    
@@ -269,7 +268,7 @@ void loop() {
       digitalWrite(trigger, LOW);
       intervalStepCounter = 0;
       displaySlideHelper = 0;}
-    else {                          // do not trigger in movie mode (setTriggerTime == 0)
+    else {                          // do not trigger in movie mode (setTriggerTime == 0) (backup-function, because of movie mode in conversion-loop
       intervalStepCounter = 0;}
     
     // abort the slide with enter button
@@ -316,10 +315,10 @@ void displayNumber (int displayNum) {
   // special symbols
   if (displayNum == 111) { // value entered symbol
     digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 17); shiftOut(shiftData, shiftClock, MSBFIRST, 17); digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 100){ // slide direction 0 (left) symbol
-    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 48); shiftOut(shiftData, shiftClock, MSBFIRST, 0); digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 101){ // slide direction 1 (right) symbol
+  else if (displayNum == 100){ // slide direction 0 (right) symbol
     digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 0); shiftOut(shiftData, shiftClock, MSBFIRST, 6); digitalWrite(shiftLatch, HIGH);}
+  else if (displayNum == 101){ // slide direction 1 (left) symbol
+    digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 48); shiftOut(shiftData, shiftClock, MSBFIRST, 0); digitalWrite(shiftLatch, HIGH);}
   else if (displayNum == 102){ // wait for an input (Go)
     digitalWrite(shiftLatch, LOW); shiftOut(shiftData, shiftClock, MSBFIRST, 250); shiftOut(shiftData, shiftClock, MSBFIRST, 184); digitalWrite(shiftLatch, HIGH);}
   else if (displayNum == 103){ // slide symbol
