@@ -7,14 +7,31 @@ Dieses readme beschäftigt sich mit dem Projekt und Code an sich, eine Bedienung
 I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
-You can find photos I made and in the future also videos on my website [jtByt.Pictures.de](http://jtByt.Pictures.de "my website").
+You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
 
 **deutsch**  
 Ich habe vor kurzer Zeit angefangen Zeitrafferaufnahmen mit meiner DSLR zu machen und wollte jetzt einen Kamera slider haben, da mit diesem noch spannendere Bewegungen möglich sind.
 Also habe ich mich für arduino als Plattform für mein Projekt entschieden und angefangen zu programmieren und an der Elektronik zu basteln.
 Das Board und die Software sollten als erstes einen Schrittmotor und den Fernauslöser der Kamera ansteuern. Für die Eingaben habe ich mich für zwei 7-Segment-Anzeigen und drei Taster entschieden.
 
-Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt.Pictures.de](http://jtByt.Pictures.de "my website").
+Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
+
+## user manual / Benutzerhandbuch  
+**english**  
+
+1. set the time in minutes to slide along the slider
+2. choose the slide direction
+3. set the trigger interval in seconds
+   
+**deutsch**  
+
+1. Eingabe der Zeit in Minuten, die für eine Fahrt gebraucht werden soll  
+2. Wahl der Richtung  
+3. Eingabe des Auslöseintervalls in Sekunden  
+
+## setup manual / Einrichtungshandbuch
+follows soon / folgt bald
+
 
 ## what should the software do? / Was soll die Software können?
 #### in general
@@ -32,7 +49,9 @@ Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auc
 * movie mode with constant velocity
 * (more or less) smart symbols on the display indicating the direction, current mode and errors
 
+#### additional in version 1.1
+* HOLD option having the stepper motor turned on all the time to hold the camera in place
 
-#### additional in version 2.0
+#### additional in version 2.0 (far far away)
 * movie mode (perhaps at entering trigger interval 0) with a constant or s-curve slide
 * a servo motor for tiling the camera
