@@ -61,3 +61,5 @@ follows soon / folgt bald
 * 1.0.1:
 	* setSlideTime=0 will get an division throgh 0 in the caclulation which causes malfunction (because stepsPerInterval will be 0)
 	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
+* 1.0.2:  
+	* little modification at big slide times

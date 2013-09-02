@@ -1,5 +1,5 @@
 // slider OS
-// version 1.0.1
+// version 1.0.2
 // Jannik Beyerstedt, Hamburg, Germany | jtByt-Pictures.de | jtByt.Pictures@gmail.com
 // CC BY-NC-SA 3.0
 
@@ -207,7 +207,7 @@ void loop() {
     int stepsPerSecond = maxSteps / setSlideTime / 60;
     int timePerStep = 1000 / stepsPerSecond;
     slideStepDelay = timePerStep - workingDelay;
-    if (slideStepDelay <= 1) {slideStepDelay = 1;} // safety that slideStepDelay is not too small
+    if (slideStepDelay <= 0) {slideStepDelay = 0;} // safety that slideStepDelay is not too small
     
     // calculate the steps per Interval
     if (setTriggerTime == 0) { // movie mode
@@ -260,8 +260,9 @@ void loop() {
     // step trigger interval
     if (intervalStepCounter < slideStepsPerInterval) { // step
       digitalWrite(stepperStep, HIGH);
-      delay(slideStepDelay);
+      delay(1);
       digitalWrite(stepperStep, LOW);
+      delay(slideStepDelay);
       intervalStepCounter ++;
       totalStepCounter ++;}
     else if (setTriggerTime >= 1) { // trigger if setTriggerTime is not 0
