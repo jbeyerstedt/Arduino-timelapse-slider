@@ -1,15 +1,25 @@
-# arduino timelapse camera slider
-This is the readme for the project and code itself, for a user manual check user_readme.md, the electronically setup is under electronics.md  
-Dieses readme beschäftigt sich mit dem Projekt und Code an sich, eine Bedienungsanleitung findet sich unter user_readme.md, die Elektronik und alles andere technische drum herum ist in electronics.md zusammengefasst.
+# Arduino-timelapse-slider
+by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
+[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [github](https://github.com/jtByt-Pictures)  
+**software documentation**  
+
+
+#### about this / über dieses Dokument  
+**english:** 
+This readme contains the introduction of the project, chancelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
+
+**deutsch:** 
+Dieses readmy enthält eine Einführung zum Projekt, das chancelog und das **Benutzerhandbuch** für den Code/ die Software. Schau also auch das "hardware_readme.md" und das "electronics_readme.md" für die vollständige Dokumentation an.
+
 
 ## introduction / Einleitung
-**english**  
+**english:** 
 I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
 You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
 
-**deutsch**  
+**deutsch:** 
 Ich habe vor kurzer Zeit angefangen Zeitrafferaufnahmen mit meiner DSLR zu machen und wollte jetzt einen Kamera slider haben, da mit diesem noch spannendere Bewegungen möglich sind.
 Also habe ich mich für arduino als Plattform für mein Projekt entschieden und angefangen zu programmieren und an der Elektronik zu basteln.
 Das Board und die Software sollten als erstes einen Schrittmotor und den Fernauslöser der Kamera ansteuern. Für die Eingaben habe ich mich für zwei 7-Segment-Anzeigen und drei Taster entschieden.
@@ -17,13 +27,13 @@ Das Board und die Software sollten als erstes einen Schrittmotor und den Fernaus
 Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
 
 ## user manual / Benutzerhandbuch  
-**english**  
+**english:** 
 
 1. set the time in minutes to slide along the slider
 2. choose the slide direction
 3. set the trigger interval in seconds
    
-**deutsch**  
+**deutsch:**  
 
 1. Eingabe der Zeit in Minuten, die für eine Fahrt gebraucht werden soll  
 2. Wahl der Richtung  
