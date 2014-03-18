@@ -1,6 +1,9 @@
 // slider OS
+// for controlling a timelapse slider and triggering the Camera
+// with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
+
 // version 1.0.2
-// Jannik Beyerstedt, Hamburg, Germany | jtByt-Pictures.de | jtByt.Pictures@gmail.com
+// Jannik Beyerstedt, Hamburg, Germany | jannikbeyerstedt.de | jtByt.Pictures@gmail.com
 // CC BY-NC-SA 3.0
 
 // debug variables
