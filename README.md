@@ -1,30 +1,36 @@
 # Arduino-timelapse-slider
 by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
-[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [github](https://github.com/jtByt-Pictures)  
+[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [Github](https://github.com/jtByt-Pictures)  
 **software documentation**  
+
+
+## HEY - I´m writing a completely new version! I´ll be uploaded soon!
+After studying and getting the state machine koan, I decided to completely rewrite the code of the timelapse-slider, because this is a state machine, so it should be programmed as state machine.  
+I also will separate the software in smaller modules.  
+See the results soon!
 
 
 #### about this / über dieses Dokument  
 **english:** 
-This readme contains the introduction of the project, chancelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
+This readme contains the introduction of the project, changelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
 
 **deutsch:** 
-Dieses readmy enthält eine Einführung zum Projekt, das chancelog und das **Benutzerhandbuch** für den Code/ die Software. Schau also auch das "hardware_readme.md" und das "electronics_readme.md" für die vollständige Dokumentation an.
+Dieses readme enthält eine Einführung zum Projekt, das changelog und das **Benutzerhandbuch** für den Code/ die Software. Schau also auch das "hardware_readme.md" und das "electronics_readme.md" für die vollständige Dokumentation an.
 
 
-## introduction / Einleitung
+## introductions / Einleitung
 **english:** 
-I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the arduino UNO board to control a stepper motor and the trigger of my camera.
+I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the Arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
-You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
+You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "website").
 
 **deutsch:** 
-Ich habe vor kurzer Zeit angefangen Zeitrafferaufnahmen mit meiner DSLR zu machen und wollte jetzt einen Kamera slider haben, da mit diesem noch spannendere Bewegungen möglich sind.
-Also habe ich mich für arduino als Plattform für mein Projekt entschieden und angefangen zu programmieren und an der Elektronik zu basteln.
+Ich habe vor kurzer Zeit angefangen Zeitrafferaufnahmen mit meiner DSLR zu machen und wollte jetzt einen Kamera-Slider haben, da mit diesem noch spannendere Bewegungen möglich sind.
+Also habe ich mich für Arduino als Plattform für mein Projekt entschieden und angefangen zu programmieren und an der Elektronik zu basteln.
 Das Board und die Software sollten als erstes einen Schrittmotor und den Fernauslöser der Kamera ansteuern. Für die Eingaben habe ich mich für zwei 7-Segment-Anzeigen und drei Taster entschieden.
 
-Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt-Pictures.de](http://jtByt-Pictures.de "my website").
+Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt-Pictures.de](http://jtByt-Pictures.de "website").
 
 ## user manual / Benutzerhandbuch  
 **english:** 
@@ -52,7 +58,7 @@ follows soon / folgt bald
 * tree buttons as inputs (plus, minus, enter)
 * drive two 8-bit shift registers for the displays
 * drive a stepper motor (via stepper motor driver IC)
-* turn off the stepper motor if it´s not needed (like at setting values or wating for a new start)
+* turn off the stepper motor if it´s not needed (like at setting values or waiting for a new start)
 
 
 #### additional in version 1.0
@@ -69,7 +75,7 @@ follows soon / folgt bald
 
 ## changelog
 * 1.0.1:
-	* setSlideTime=0 will get an division throgh 0 in the caclulation which causes malfunction (because stepsPerInterval will be 0)
+	* setSlideTime=0 will get an division through 0 in the calculation which causes malfunction (because stepsPerInterval will be 0)
 	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
 * 1.0.2:  
 	* little modification at big slide times
