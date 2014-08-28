@@ -15,7 +15,7 @@ int numberLimitTriggerTime = 10;  // maximum trigger interval time (in seconds)
 
 // constants for the slider (mechanical)
 int triggerDuration = 500;  // how long should your camera be triggered (exposure time is still set in camera)
-int maxSteps = 2200;        // amount of steps to slide the slider along
+int maxSteps = 4400;        // amount of steps to slide the slider along {my calue for half step: 2200}
 int workingDelay = 72;      // time to execute one the slide code in ms (7200 ms for 100 steps measured)
 
 // setup I/O and helper integers
@@ -30,9 +30,9 @@ const int stepperStep = 6;
 const int stepperDir = 7;
 const int stepperSleep = 4;
 
-const int buttonPlus = A1;
-const int buttonMinus = A2;
-const int buttonEnter = A0;
+const int buttonPlus = A1; // A1 -> plus = plus
+const int buttonMinus = A2; // A2 -> minus = enter
+const int buttonEnter = A0; // A0 -> enter = minus
 // button helper integers
 int readValuePlus = 0;
 int readValueMinus = 0;
@@ -113,7 +113,9 @@ void loop() {
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
-    readValueEnter = digitalRead(buttonEnter);
+    readValueEnter = 0;
+    if (analogRead(buttonEnter) >900) {readValueEnter = 1;}
+    //readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
       if (choosenNumber == 0) {choosenNumber = 1;} // bugfix: else the calculation will get an division through 0
@@ -150,7 +152,9 @@ void loop() {
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
-    readValueEnter = digitalRead(buttonEnter);
+    readValueEnter = 0;
+    if (analogRead(buttonEnter) >900) {readValueEnter = 1;}
+    //readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
       displayNumber(111);
@@ -186,7 +190,9 @@ void loop() {
     if (readValueMinus == LOW && lastMinus != readValueMinus) {
       lastMinus = readValueMinus; delay(delayVal);}
     
-    readValueEnter = digitalRead(buttonEnter);
+    readValueEnter = 0;
+    if (analogRead(buttonEnter) >900) {readValueEnter = 1;}
+    //readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){ 
       setTriggerTime = choosenNumber;
@@ -240,7 +246,9 @@ void loop() {
     for (waitHepler = 0; waitHepler == 0; waitHepler++) { // display wait-sign only once in this loop
       displayNumber(102);}
     
-    readValueEnter = digitalRead(buttonEnter);
+    readValueEnter = 0;
+    if (analogRead(buttonEnter) >900) {readValueEnter = 1;}
+    //readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
       lastEnter = readValueEnter;
@@ -263,7 +271,7 @@ void loop() {
     // step trigger interval
     if (intervalStepCounter < slideStepsPerInterval) { // step
       digitalWrite(stepperStep, HIGH);
-      delay(1);
+      //delay(1);
       digitalWrite(stepperStep, LOW);
       delay(slideStepDelay);
       intervalStepCounter ++;
@@ -279,7 +287,9 @@ void loop() {
       intervalStepCounter = 0;}
     
     // abort the slide with enter button
-    readValueEnter = digitalRead(buttonEnter);
+    readValueEnter = 0;
+    if (analogRead(buttonEnter) >900) {readValueEnter = 1;}
+    //readValueEnter = digitalRead(buttonEnter);
     delay(delayVal);
     if (readValueEnter == HIGH && lastEnter != readValueEnter){
       lastEnter = readValueEnter;
@@ -316,8 +326,8 @@ void loop() {
 void displayNumber (int displayNum) {
   int NumPartTens = 0;  // 10, 20, ...
   int NumPartOnes = 0; // 1, 2, ...
-  int TensArray[12] = {126, 6, 188, 158, 198, 218, 242, 14, 254, 206, 0, 1}; // 0 - 9 + clear + DP
-  int OnesArray[12] = {222, 12, 182, 62, 108, 122, 248, 14, 254, 110, 0, 1}; // 0 - 9 + clear + DP
+  int TensArray[12] = {126, 6, 188, 158, 198, 218, 242, 14, 254, 206, 0, 1}; // 0 to 9 + clear + DP
+  int OnesArray[12] = {222, 12, 182, 62, 108, 122, 248, 14, 254, 110, 0, 1}; // 0 to 9 + clear + DP
   
   // special symbols
   if (displayNum == 111) { // value entered symbol
