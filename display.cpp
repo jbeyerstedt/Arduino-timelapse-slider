@@ -12,12 +12,11 @@
 #include "display.h"
 
 
-
 // constants to be substituted by parametric ones
 const int D1_CLEAR  = 0x00;
-const int D1_DP     = 0x01;
+const int D1_DP     = d1[7];
 const int D2_CLEAR  = 0x00;
-const int D2_DP     = 0x01;
+const int D2_DP     = d2[7];
 
 const int S_111     = ((d1[3]|D1_DP)<<8) | (d2[3]|D2_DP); // d+DP | d+DP
 const int SLD_LEFT  = ((d1[3]|d1[4])<<8) | 0x0000; // d+e | 0
@@ -55,13 +54,9 @@ const int TensArray[11] = {
     0x0000,                                   // clear
   };
 
-display2digits::display2digits () {
-  
-}
 
 
-
-void display2digits::displayNumber (int displayNum) {
+void displayNumber (int displayNum) {
   int NumPartTens = 0;  // 10, 20, ...
   int NumPartOnes = 0;  // 1, 2, ...
   

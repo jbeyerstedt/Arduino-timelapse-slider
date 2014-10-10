@@ -13,13 +13,11 @@
 #include <Arduino.h>
 
 
-Slider::Slider (display2digits *disp) {
+Slider::Slider () {
   maxPosition = maxSteps;
   slideRunning = false;
   timeIntervalStart = 0;
   slideDir = 1;
-  
-  theDisplay = disp;
 }
 
 
@@ -86,7 +84,7 @@ boolean Slider::update() {
 // starts stepper for one slide interval 
 void Slider::doSlide () {
   Serial.println("retrigger tone");
-  theDisplay->displayNumber(103);
+  displayNumber(103);
   timeIntervalStart = millis();
   //tone(stepperStep, stepsPerSecond, intervalDuration);
   
@@ -97,7 +95,7 @@ void Slider::doSlide () {
 
 void Slider::camTrigger () {
   Serial.println("trigger");
-  theDisplay->displayNumber(104);
+  displayNumber(104);
   digitalWrite(trigger, HIGH);
   delay(triggerDuration);
   digitalWrite(trigger, LOW);
@@ -127,7 +125,7 @@ boolean Slider::doSteps (int dir) {
   }
   else {
 
-    theDisplay->displayNumber(103);
+    displayNumber(103);
     // make x steps
     for (int i = 0; i < slideStepsPerInterval; i++) {
       // make one step
@@ -146,7 +144,7 @@ boolean Slider::doSteps (int dir) {
     delay(1000);
 
     Serial.println("trigger");
-    theDisplay->displayNumber(104);
+    displayNumber(104);
     digitalWrite(trigger, HIGH);
     delay(triggerDuration);
     digitalWrite(trigger, LOW);

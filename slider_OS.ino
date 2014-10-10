@@ -6,9 +6,6 @@
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
- * for low frequency tones,  toneAC is used:
- * https://code.google.com/p/arduino-tone-ac/downloads/list
- * 
  * version 2.0.0 beta1 (dd.mm.yyyy)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
@@ -45,9 +42,7 @@ Button2 buttonEnter (buttonEnterPin); // special for my broken button
 
 SlowImpulses stepper;
 
-display2digits myDisplay;
-
-Slider mySlider(&myDisplay);
+Slider mySlider;
 
 void setup() {
   pinMode(ledPin, OUTPUT);
@@ -82,7 +77,7 @@ void loop() {
       
       buttons.setInterval(1,numberLimitSlideTime);
       slideTime = buttons.getValue();
-      myDisplay.displayNumber(slideTime);
+      displayNumber(slideTime);
       
       if (buttonEnter.triggered() ) {
         buttons.reset();
@@ -96,9 +91,9 @@ void loop() {
       buttons.setInterval(0,1);
       slideDirection = buttons.getValue();  
       if (slideDirection == 1) { // right
-        myDisplay.displayNumber(101);
+        displayNumber(101);
       }else if (slideDirection == 0) { // left
-        myDisplay.displayNumber(100);
+        displayNumber(100);
       }
       
       if (buttonEnter.triggered() ) {
@@ -112,14 +107,14 @@ void loop() {
       
       buttons.setInterval(0,numberLimitTriggerTime);
       triggerInterval = buttons.getValue();
-      myDisplay.displayNumber(triggerInterval);
+      displayNumber(triggerInterval);
       
       if (buttonEnter.triggered() ) {
         buttons.reset();
         currentState = 4;
         Serial.println("--switch to state 4");
         
-        myDisplay.displayNumber(102);
+        displayNumber(102);
         mySlider.setParameters(slideTime, triggerInterval, slideDirection);
       }
       
@@ -143,7 +138,7 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
-        myDisplay.displayNumber(111);
+        displayNumber(111);
         currentState = 11;
         Serial.println("--switch to state 11");
       }
@@ -156,7 +151,7 @@ void loop() {
       // initialise all systems
       // or something wrong happened
       currentState = 1;
-      myDisplay.displayNumber(111);
+      displayNumber(111);
       Serial.println("--reset (default case)");
       break;
   }
