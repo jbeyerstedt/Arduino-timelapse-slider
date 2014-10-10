@@ -36,14 +36,12 @@ class Slider {
   unsigned long timeIntervalStart;
   
   boolean slideRunning;
-  
-  display2digits *theDisplay;
 
   void camTrigger();
   void doSlide();
   
   public:
-    Slider (display2digits *disp);
+    Slider ();
     void setParameters (int travelTime, int triggerInterval, int slidingDirection);
     void setParametersOld (int travelTime, int triggerInterval);
     

@@ -34,24 +34,10 @@
 // a, b, c, d, e, f, g, DP (numbered from the top clockwise, middle segment equals g)
 const int d1[8] = {0x08, 0x04, 0x02, 0x10, 0x20, 0x40, 0x80, 0x01}; // tens
 const int d2[8] = {0x02, 0x04, 0x08, 0x10, 0x80, 0x40, 0x20, 0x01}; // ones
-
-//const int TensArray[12] = {126, 6, 188, 158, 198, 218, 242, 14, 254, 206, 0, 1}; // 0 to 9 + clear + DP
-//const int OnesArray[12] = {222, 12, 182, 62, 108, 122, 248, 14, 254, 110, 0, 1}; // 0 to 9 + clear + DP
   
 
 
-
-class display2digits {
-  int TensArray[10];
-  int OnesArray[10];
-  
-  public:
-  display2digits();
-  void displayNumber (int displayNum);
-  
-  
-  
-};
+void displayNumber (int displayNum);
 
 
 
