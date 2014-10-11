@@ -4,8 +4,8 @@ by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany
 **software documentation**  
 
 
-## HEY - I´m writing a completely new version! I´ll be uploaded soon!
-After studying and getting the state machine koan, I decided to completely rewrite the code of the timelapse-slider, because this is a state machine, so it should be programmed as state machine.  
+## HEY - I´m writing a completely new version! It´ll be uploaded soon!
+After studying and getting the state machine known, I decided to completely rewrite the code of the timelapse-slider, because this is a state machine, so it should be programmed as state machine.  
 I also will separate the software in smaller modules.  
 See the results soon!
 
@@ -35,18 +35,52 @@ Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auc
 ## user manual / Benutzerhandbuch  
 **english:** 
 
-1. set the time in minutes to slide along the slider
-2. choose the slide direction
-3. set the trigger interval in seconds
+1. switch on power
+2. The software initializes
+	1. give it the starting point (left or right)
+3. choose mode: interval trigger (**in**terval), timelapse slide (**sl**ide), movie (**co**ntinuous)
+4. manual control (all modes the same)
+	1. move carriage with plus and minus buttons
+5. at interval trigger mode (it´s an interval trigger only)
+	1. set trigger interval
+	2. set direction
+	3. push enter to begin
+	4. end with enter -> back to step 4
+6. at timelapse slide mode (interval trigger and carriage movement)
+	1. set total slide time
+	2. set direction
+	3. set trigger interval
+	4. push enter to begin
+	5. it´ll end if time is elapsed or endstop hit -> back to step 4
+	6. or abort by clicking enter -> back to step 4
+7. at movie mode (no trigger, only carriage movement)
+	1. set total movement time
+	2. set direction
+	3. push enter to begin
+	4. it´ll end if time is elapsed or endstop hit -> back to step 4
+	5. or abort by clicking enter -> back to step 4
+8. change mode by reconnecting power or resetting the arduino
+
+Symbols:
+
+- In -> interval mode
+- SL -> slider mode
+- co -> movie mode (continuous)
+- dr -> set total time (drive)
+- In -> set trigger interval
+- ┌ ┐ -> moving carriage
+- [ ] -> triggering camera
+- – –  -> waiting for next triggering (interval trigger mode only)
+- Id -> idle/ manual drive possible
+
    
 **deutsch:**  
 
-1. Eingabe der Zeit in Minuten, die für eine Fahrt gebraucht werden soll  
-2. Wahl der Richtung  
-3. Eingabe des Auslöseintervalls in Sekunden  
+follows soon / folgt bald 
 
 ## setup manual / Einrichtungshandbuch
-follows soon / folgt bald
+This will explain the options that can be set in the config.h file. But it´s quite well commented in the file itself as well.  
+more follows soon / mehr folgt bald  
 
 
 ## what should the software do? / Was soll die Software können?
@@ -58,19 +92,18 @@ follows soon / folgt bald
 * tree buttons as inputs (plus, minus, enter)
 * drive two 8-bit shift registers for the displays
 * drive a stepper motor (via stepper motor driver IC)
-* turn off the stepper motor if it´s not needed (like at setting values or waiting for a new start)
+
 
 
 #### additional in version 1.0
 * movie mode with constant velocity
 * (more or less) smart symbols on the display indicating the direction, current mode and errors
 
-#### additional in version 1.1
-* HOLD option having the stepper motor turned on all the time to hold the camera in place
-
-#### additional in version 2.0 (far far away)
-* movie mode (perhaps at entering trigger interval 0) with a constant or s-curve slide
-* a servo motor for tilting the camera
+#### additional in version 2.0
+* coded as finite state machine
+* 3 modes for timelapse, timelapse with slider, movie
+* virtual endstops
+* TODO
 
 
 ## changelog
@@ -79,3 +112,7 @@ follows soon / folgt bald
 	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
 * 1.0.2:  
 	* little modification at big slide times
+* 2.0:
+	* all new rewritten version. New software concept and it´s C++ now.
+	* 3 modes for timelapse, timelapse with slider, movie
+	* 
