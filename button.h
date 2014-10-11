@@ -41,7 +41,7 @@ class ButtonPair {
   public:
     ButtonPair(int PlusPin, int MinusPin);  
     void setInterval (int start, int end);
-    boolean getValue ();
+    int getValue ();
     void update ();
     void reset();
 };

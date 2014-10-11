@@ -92,7 +92,7 @@ void ButtonPair::update () {
 
 }
 
-boolean ButtonPair::getValue () {
+int ButtonPair::getValue () {
   return value;
 }
 
