@@ -21,7 +21,8 @@
 #include "slow_impulses.h"
 
 
-int currentState = 0;
+int currentState = 0; 
+int currentMode  = 0; // 1: IN - 2: SL - 3: CO
 
 int choosenNumber = 0;
 
@@ -31,15 +32,14 @@ int triggerInterval = 0;
 
 
 
-
 ButtonPair buttons (buttonPlusPin, buttonMinusPin);
 //Button buttonEnter (buttonPlusPin); // for a normally working button
 Button2 buttonEnter (buttonEnterPin); // special for my broken button
 
-
 SlowImpulses stepper;
 
 Slider mySlider;
+
 
 void setup() {
   pinMode(ledPin, OUTPUT);
@@ -62,6 +62,7 @@ void setup() {
   Serial.begin(9600);
 }
 
+
 void loop() {
   
   // read all buttons
@@ -70,21 +71,113 @@ void loop() {
   
   
   switch (currentState) {
-    case 1: // set total slide time
+    case 1:  // initialization / set mode
+      buttons.setInterval(0,3);
+      currentMode = buttons.getValue();
+      switch (currentMode) {
+        case 1: // IN
+          displaySymbol(modeIn);
+          break;
+        case 2: // SL
+          displaySymbol(modeSl);
+          break;
+        case 3: // CO
+          displaySymbol(modeCo);
+          break;
+        default:
+          displaySymbol(waitInput);
+          //Serial.println("no mode set");
+          break;
+      }
       
+      if (buttonEnter.triggered() ) {
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 11;
+            Serial.println("--switch to state 11");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 21;
+            Serial.println("--switch to state 21");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 31;
+            Serial.println("--switch to state 31");
+            break;
+          default:
+            displaySymbol(waitInput);
+            Serial.println("ERROR: no mode set");
+            break;
+        }
+      }
+      
+      break;
+      
+    case 11:  // manual operation / idle
+    case 21:
+    case 31:
+      // TODO implement manual operation
+      displaySymbol(waitIdle);
+      
+      if (buttonEnter.triggered() ) {
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 12;
+            Serial.println("--switch to state 12");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 22;
+            Serial.println("--switch to state 22");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 32;
+            Serial.println("--switch to state 32");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
+      }
+      break;  
+    
+    case 22:  // set total time
+    case 32:
       buttons.setInterval(0,numberLimitSlideTime);
       slideTime = buttons.getValue();
       displayNumber(slideTime);
       
       if (buttonEnter.triggered() ) {
-        buttons.reset();
-        currentState = 2;
-        Serial.println("--switch to state 2");
+        switch (currentMode) {
+          case 2: // SL
+            buttons.reset();
+            currentState = 23;
+            Serial.println("--switch to state 23");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 33;
+            Serial.println("--switch to state 33");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
       }
-      
       break;
-    case 2: // set slide direction
-      
+    
+    case 13:  // set carriage movement direction
+    case 23:
+    case 33:
       buttons.setInterval(0,1);
       slideDirection = buttons.getValue();  
       if (slideDirection == 1) { // right
@@ -94,39 +187,136 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
-        buttons.reset();
-        currentState = 3;
-        Serial.println("--switch to state 3");
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 14;
+            Serial.println("--switch to state 14");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 24;
+            Serial.println("--switch to state 24");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 34;
+            Serial.println("--switch to state 34");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
       }
-      
       break;
-    case 3: // set trigger interval
-      
+    
+    case 12:  // set trigger interval
+    case 24:
       buttons.setInterval(0,numberLimitTriggerTime);
       triggerInterval = buttons.getValue();
       displayNumber(triggerInterval);
       
       if (buttonEnter.triggered() ) {
-        buttons.reset();
-        currentState = 4;
-        Serial.println("--switch to state 4");
-        
-        displaySymbol(waitGo);
-        mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 13;
+            Serial.println("--switch to state 13");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 25;
+            Serial.println("--switch to state 25");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
       }
-      
       break;
-    case 4: // wait for go
+    
+    case 14:  // prespare data / set slide parameters
+    case 25:
+    case 34:
+      Serial.println("--- data preparation (state 14, 25, 35)");
+      displaySymbol(waitGo);
+      
+      switch (currentMode) {
+        case 1: // IN
+          // TODO
+          //mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          
+          buttons.reset();
+          currentState = 15;
+          Serial.println("--switch to state 15");
+          break;
+        case 2: // SL
+          // TODO
+          mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          
+          buttons.reset();
+          currentState = 26;
+          Serial.println("--switch to state 26");
+          break;
+        case 3: // CO
+          // TODO
+          //mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          
+          buttons.reset();
+          currentState = 35;
+          Serial.println("--switch to state 35");
+          break;
+        default:
+          displaySymbol(waitInput);
+          currentState = 0;
+          Serial.println("ERROR: no mode set -> reset");
+          break;
+      }
+      break;
+    
+    case 15:  // wait for go
+    case 26:
+    case 35:
+      // TODO do slide
+      // mySlider.startSlide();
+      
+      
       
       if (buttonEnter.triggered() ) {
-        mySlider.startSlide();
-        
-        currentState = 10;
-        Serial.println("--switch to state 10");
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 16;
+            Serial.println("--switch to state 16");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 27;
+            Serial.println("--switch to state 27");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 36;
+            Serial.println("--switch to state 36");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
       }
-      
       break;
-    case 10: // make a timelapse (or movie) slide. mode is controlled by Slider class
+    
+    case 16:  // supervise slide operation
+    case 27:
+    case 36:
+      // TODO
+      // supervise slide
       
       if ( mySlider.update() ) {
         // normal operation
@@ -134,22 +324,39 @@ void loop() {
         Serial.println("ERROR: virtual endstop hit - slide aborted");
       }
       
+      
       if (buttonEnter.triggered() ) {
-        displaySymbol(waitInput);
-        currentState = 11;
-        Serial.println("--switch to state 11");
+        switch (currentMode) {
+          case 1: // IN
+            buttons.reset();
+            currentState = 11;
+            Serial.println("--switch to state 11");
+            break;
+          case 2: // SL
+            buttons.reset();
+            currentState = 21;
+            Serial.println("--switch to state 21");
+            break;
+          case 3: // CO
+            buttons.reset();
+            currentState = 31;
+            Serial.println("--switch to state 31");
+            break;
+          default:
+            displaySymbol(waitInput);
+            currentState = 0;
+            Serial.println("ERROR: no mode set -> reset");
+            break;
+        }
       }
-      
       break;
-    case 11: 
-      
-      break;
+    
     default:
-      // initialise all systems
+      // initialise all systems - get mode
       // or something wrong happened
-      currentState = 1;
-      displaySymbol(waitInput);
       Serial.println("--reset (default case)");
+      currentState = 1;
+      
       break;
   }
   
