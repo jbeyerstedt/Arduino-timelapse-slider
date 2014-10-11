@@ -30,10 +30,7 @@ int slideDirection = 0; // 1 = right, 0 = left
 int triggerInterval = 0;
 
 
-// TODO
-// halt position by default
-// sleep stepper by clicking plus and minus at once
-// reactivate by clicking enter
+
 
 ButtonPair buttons (buttonPlusPin, buttonMinusPin);
 //Button buttonEnter (buttonPlusPin); // for a normally working button
@@ -75,7 +72,7 @@ void loop() {
   switch (currentState) {
     case 1: // set total slide time
       
-      buttons.setInterval(1,numberLimitSlideTime);
+      buttons.setInterval(0,numberLimitSlideTime);
       slideTime = buttons.getValue();
       displayNumber(slideTime);
       
@@ -91,9 +88,9 @@ void loop() {
       buttons.setInterval(0,1);
       slideDirection = buttons.getValue();  
       if (slideDirection == 1) { // right
-        displayNumber(101);
+        displaySymbol(dirRigt);
       }else if (slideDirection == 0) { // left
-        displayNumber(100);
+        displaySymbol(dirLeft);
       }
       
       if (buttonEnter.triggered() ) {
@@ -114,7 +111,7 @@ void loop() {
         currentState = 4;
         Serial.println("--switch to state 4");
         
-        displayNumber(102);
+        displaySymbol(waitGo);
         mySlider.setParameters(slideTime, triggerInterval, slideDirection);
       }
       
@@ -138,7 +135,7 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
-        displayNumber(111);
+        displaySymbol(waitInput);
         currentState = 11;
         Serial.println("--switch to state 11");
       }
@@ -151,7 +148,7 @@ void loop() {
       // initialise all systems
       // or something wrong happened
       currentState = 1;
-      displayNumber(111);
+      displaySymbol(waitInput);
       Serial.println("--reset (default case)");
       break;
   }

@@ -12,20 +12,31 @@
 #include "display.h"
 
 
-// constants to be substituted by parametric ones
+// parametric constants for different symbols
 const int D1_CLEAR  = 0x00;
 const int D1_DP     = d1[7];
 const int D2_CLEAR  = 0x00;
 const int D2_DP     = d2[7];
 
-const int S_111     = ((d1[3]|D1_DP)<<8) | (d2[3]|D2_DP); // d+DP | d+DP
-const int SLD_LEFT  = ((d1[3]|d1[4])<<8) | 0x0000; // d+e | 0
-const int SLD_RIGT  = (0x0000 | (d1[0]|d1[1]) ); // 0 | a+b
-const int WAIT_GO   = ((d1[0]|d1[2]|d1[3]|d1[4]|d1[5]|d1[6])<<8) | (d2[2]|d2[3]|d2[4]|d2[6]); // a+c+d+e+f+g | c+d+e+g
-const int SLIDE_DO  = ((d1[4]|d1[6])<<8) | ( d2[2]|d2[6] ); // e+g | c+g
-const int SLIDE_TRG = ((d1[0]|d1[3]|d1[4]|d1[5])<<8) | ( d1[0]|d1[1]|d1[2]|d1[3] ); // a+d+e+f | a+b+c+d
-const int ERROR_NUM = (D1_DP<<8)|(d2[0]|d2[3]);
+const int WAIT_INPT = ((d1[3]|D1_DP)<<8) | (d2[3]|D2_DP); // d+DP | d+DP
+const int WAIT_IDLE = ((d1[1]|d1[2])<<8) | (d2[1]|d2[2]|d2[3]|d2[4]|d2[6]); // b+c | b+c+d+e+g
 
+const int MODE_IN   = ((d1[1]|d1[2])<<8) | (d2[2]|d2[4]|d2[6]); // b+c | c+e+g
+const int MODE_SL   = ((d1[0]|d1[1]|d1[4]|d1[5]|d1[6])<<8) | (d2[3]|d2[4]|d2[5]);; // a+b+d+f+g | d+e+f
+const int MODE_CO   = ((d1[3]|d1[4]|d1[6])<<8) | (d2[2]|d2[3]|d2[4]|d2[6]);; // d+e+g | c+d+e+g
+
+const int SET_TIME  = ((d1[1]|d1[2]|d1[3]|d1[4]|d1[6])<<8) | (d2[4]|d2[6]);; // b+c+d+e+g | e+g
+const int SET_INT   = ((d1[1]|d1[2])<<8) | (d2[2]|d2[4]|d2[6]); // b+c | c+e+g
+const int DIR_LEFT  = ((d1[3]|d1[4])<<8) | 0x0000; // d+e | 0
+const int DIR_RIGT  = (0x0000 | (d2[0]|d2[1]) ); // 0 | a+b
+
+const int WAIT_GO   = ((d1[0]|d1[2]|d1[3]|d1[4]|d1[5]|d1[6])<<8) | (d2[2]|d2[3]|d2[4]|d2[6]); // a+c+d+e+f+g | c+d+e+g
+
+const int SLIDE_MVE = ((d1[4]|d1[6])<<8) | ( d2[2]|d2[6] ); // e+g | c+g
+const int SLIDE_TRG = ((d1[0]|d1[3]|d1[4]|d1[5])<<8) | ( d2[0]|d2[1]|d2[2]|d2[3] ); // a+d+e+f | a+b+c+d
+const int SLIDE_INT = ((d1[6])<<8) | (d2[6]);; // g | g
+
+const int ERROR_NUM = (D1_DP<<8)|(d2[0]|d2[3]); // DP | a+d
 
 const int OnesArray[11] = {
     d2[0]|d2[1]|d2[2]|d2[3]|d2[4]|d2[5],      // 0 = a+b+c+d+e+f
@@ -38,7 +49,7 @@ const int OnesArray[11] = {
     d2[0]|d2[1]|d2[2],                        // 7 = a+b+c
     d2[0]|d2[1]|d2[2]|d2[3]|d2[4]|d2[5]|d2[6],// 8 = a+b+c+d+e+f+g
     d2[0]|d2[1]|d2[2]|d2[5]|d2[6],            // 9 = a+b+c+    f+g
-    0x0000,                                   // clear
+    0x00,                                     // clear
   };
 const int TensArray[11] = {
     d1[0]|d1[1]|d1[2]|d1[3]|d1[4]|d1[5],      // 0 = a+b+c+d+e+f
@@ -51,61 +62,88 @@ const int TensArray[11] = {
     d1[0]|d1[1]|d1[2],                        // 7 = a+b+c
     d1[0]|d1[1]|d1[2]|d1[3]|d1[4]|d1[5]|d1[6],// 8 = a+b+c+d+e+f+g
     d1[0]|d1[1]|d1[2]|d1[5]|d1[6],            // 9 = a+b+c+    f+g
-    0x0000,                                   // clear
+    0x00,                                     // clear
   };
 
 
 
-void displayNumber (int displayNum) {
-  int NumPartTens = 0;  // 10, 20, ...
-  int NumPartOnes = 0;  // 1, 2, ...
+void shift2digits (int shift16bits) {
+  digitalWrite(shiftLatch, LOW);
+  shiftOut(shiftData, shiftClock, MSBFIRST, (shift16bits>>8) );
+  shiftOut(shiftData, shiftClock, MSBFIRST, shift16bits );
+  digitalWrite(shiftLatch, HIGH);
+}
+
+
+
+void displayNumber (int displayNum) {  
+  int numbersBits = 0x0000;
   
-  // special symbols
-  if (displayNum == 111) { // value entered symbol
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (S_111>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, S_111 );
-    digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 100){ // slide direction 0 (left) symbol
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (SLD_LEFT>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, SLD_LEFT );
-    digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 101){ // slide direction 1 (right) symbol
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (SLD_RIGT>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, SLD_RIGT );
-    digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 102){ // wait for an input (Go)
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (WAIT_GO>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, WAIT_GO );
-    digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 103){ // slide symbol
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (SLIDE_DO>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, SLIDE_DO );
-    digitalWrite(shiftLatch, HIGH);}
-  else if (displayNum == 104){ // trigger symbol
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (SLIDE_TRG>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, SLIDE_TRG );
-    digitalWrite(shiftLatch, HIGH);}
-  
-  else if (displayNum <= 99) {
-    if (displayNum < 10) {NumPartTens = 10;}
-    else {NumPartTens = displayNum / 10;}
-    NumPartOnes = displayNum % 10;
+  if ( (displayNum <= 99) && (displayNum >= -9) ) { // [-9, 99]
+    if ( displayNum < 0 ) {       // [-9, -1]
+      numbersBits  = (d1[6]<<8); // dash
+      numbersBits |= OnesArray[-displayNum];
+    }else if (displayNum < 10) {  // [ 0,  9]
+      numbersBits  = D1_CLEAR<<8;
+      numbersBits |= OnesArray[displayNum];
+    }else {                       // [10, 99]
+      numbersBits  = (TensArray[ displayNum / 10 ] << 8);
+      numbersBits |= OnesArray[ displayNum % 10 ];
+    }
     
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, TensArray[NumPartTens]);
-    shiftOut(shiftData, shiftClock, MSBFIRST, OnesArray[NumPartOnes]);
-    digitalWrite(shiftLatch, HIGH);
+    shift2digits(numbersBits);
+
   }
   else { // error, too big number
-    digitalWrite(shiftLatch, LOW);
-    shiftOut(shiftData, shiftClock, MSBFIRST, (ERROR_NUM>>8) );
-    shiftOut(shiftData, shiftClock, MSBFIRST, ERROR_NUM );
-    digitalWrite(shiftLatch, HIGH);
+    shift2digits(ERROR_NUM );
+  }
+}
+
+
+
+void displaySymbol (mySymbols displaySym) {
+  switch (displaySym) {
+    case waitInput:
+      shift2digits(WAIT_INPT);
+      break;
+    case waitIdle:
+      shift2digits(WAIT_IDLE);
+      break;
+    case modeIn:
+      shift2digits(MODE_IN);
+      break;
+    case modeSl:
+      shift2digits(MODE_SL);
+      break;
+    case modeCo:
+      shift2digits(MODE_CO);
+      break;
+    case setTime:
+      shift2digits(SET_TIME);
+      break;
+    case setInt:
+      shift2digits(SET_INT);
+      break;
+    case dirLeft:
+      shift2digits(DIR_LEFT);
+      break;
+    case dirRigt:
+      shift2digits(DIR_RIGT);
+      break;
+    case waitGo:
+      shift2digits(WAIT_GO);
+      break;
+    case slideMve:
+      shift2digits(SLIDE_MVE);
+      break;
+    case slideTrg:
+      shift2digits(SLIDE_TRG);
+      break;
+    case slideInt:
+      shift2digits(SLIDE_INT);
+      break;
+    default:
+      Serial.println("ERROR: invalid symbol requested");
+      break;
   }
 }

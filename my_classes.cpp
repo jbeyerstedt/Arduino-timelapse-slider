@@ -84,7 +84,7 @@ boolean Slider::update() {
 // starts stepper for one slide interval 
 void Slider::doSlide () {
   Serial.println("retrigger tone");
-  displayNumber(103);
+  displaySymbol(slideMve);
   timeIntervalStart = millis();
   //tone(stepperStep, stepsPerSecond, intervalDuration);
   
@@ -95,7 +95,7 @@ void Slider::doSlide () {
 
 void Slider::camTrigger () {
   Serial.println("trigger");
-  displayNumber(104);
+  displaySymbol(slideTrg);
   digitalWrite(trigger, HIGH);
   delay(triggerDuration);
   digitalWrite(trigger, LOW);
@@ -125,7 +125,8 @@ boolean Slider::doSteps (int dir) {
   }
   else {
 
-    displayNumber(103);
+    //displayNumber(103);
+    displaySymbol(slideMve);
     // make x steps
     for (int i = 0; i < slideStepsPerInterval; i++) {
       // make one step
@@ -144,7 +145,7 @@ boolean Slider::doSteps (int dir) {
     delay(1000);
 
     Serial.println("trigger");
-    displayNumber(104);
+    displaySymbol(slideTrg);
     digitalWrite(trigger, HIGH);
     delay(triggerDuration);
     digitalWrite(trigger, LOW);
