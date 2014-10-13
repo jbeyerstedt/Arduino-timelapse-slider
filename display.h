@@ -40,6 +40,9 @@ const int d2[8] = {0x02, 0x04, 0x08, 0x10, 0x80, 0x40, 0x20, 0x01}; // ones
 typedef enum {
   waitInput,  // some input is expected
   waitIdle,   // idle / manual control mode
+  initPos,    // enter initial position
+  initLeft,   // initial position left
+  initRigt,   // initial position right
   modeIn,     // interval trigger mode (IN mode)
   modeSl,     // timelapse slider mode (SL mode)
   modeCo,     // movie move (CO mode)

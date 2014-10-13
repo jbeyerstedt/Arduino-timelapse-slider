@@ -19,7 +19,11 @@ const int D2_CLEAR  = 0x00;
 const int D2_DP     = d2[7];
 
 const int WAIT_INPT = ((d1[3]|D1_DP)<<8) | (d2[3]|D2_DP); // d+DP | d+DP
-const int WAIT_IDLE = ((d1[1]|d1[2])<<8) | (d2[1]|d2[2]|d2[3]|d2[4]|d2[6]); // b+c | b+c+d+e+g
+//const int WAIT_IDLE = ((d1[1]|d1[2])<<8) | (d2[1]|d2[2]|d2[3]|d2[4]|d2[6]); // b+c | b+c+d+e+g
+const int WAIT_IDLE = ((D1_DP)<<8) | 0x0000; // DP | 0
+const int INIT_POS  = ((d1[0]|d1[1]|d1[4]|d1[5]|d1[6])<<8) | (d2[2]|d2[3]|d2[4]|d2[6]); // a+b+e+f+g | c+d+e+g
+const int INIT_LEFT = ((d1[4]|d1[5])<<8) | 0x0000;  // e+f | 0
+const int INIT_RIGT = 0x0000 | (d2[1]|d2[2]); // 0 | b+c
 
 const int MODE_IN   = ((d1[1]|d1[2])<<8) | (d2[2]|d2[4]|d2[6]); // b+c | c+e+g
 const int MODE_SL   = ((d1[0]|d1[2]|d1[3]|d1[5]|d1[6])<<8) | (d2[3]|d2[4]|d2[5]);; // a+c+d+f+g | d+e+f
@@ -108,6 +112,15 @@ void displaySymbol (mySymbols displaySym) {
       break;
     case waitIdle:
       shift2digits(WAIT_IDLE);
+      break;
+    case initPos:
+      shift2digits(INIT_POS);
+      break;
+    case initLeft:
+      shift2digits(INIT_LEFT);
+      break;
+    case initRigt:
+      shift2digits(INIT_RIGT);
       break;
     case modeIn:
       shift2digits(MODE_IN);
