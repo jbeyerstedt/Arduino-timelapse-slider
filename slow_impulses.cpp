@@ -19,6 +19,8 @@ SlowImpulses::SlowImpulses() {
 
 
 void SlowImpulses::init(int pin) {
+  Serial.println("SlowImpulses::init"); // debug
+  
   pinNo = pin;             // save pin for later use
   
   noInterrupts();          // disable all interrupts
@@ -50,11 +52,13 @@ void SlowImpulses::init(int pin) {
   interrupts();            // reenable all interrupts
   
 }
- 
+
+
 boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
-  TCNT1 = 0;        // reset counter register
+  Serial.println("SlowImpulses::set"); // debug
   
-  // compare value = CPU_FREQU / PRESCALER / desired frequency / FUNCT_PERIOD
+  TCNT1 = 0;               // reset counter register
+  
   timerCompareVal = CPU_FREQU / PRESCALER / frequency / FUNCT_PERIOD;
   
   if ( (timerCompareVal < 65536) && (timerCompareVal > 0) ) {
@@ -64,14 +68,21 @@ boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
     no_error = false;
   }
   
-  // max number of interrupts = desired duration * desired frequency
-  durationCompare = duration * frequency;
+  // max number of interrupts = desired duration[s] * desired frequency
+  durationCompare = (duration/1000) * frequency;
+  
+  Serial.print("durationCompare "); Serial.println(durationCompare); // debug
+  Serial.print("timerCompareVal "); Serial.println(timerCompareVal); // debug
+  
   durationStatus = false;    // false -> SlowImpulses interval not started
-    
+  
   return no_error;
 }
 
+
 void SlowImpulses::start() {
+  Serial.println("SlowImpulses::start"); // debug
+  
   if (no_error) {             // prevent executing with invalid values
     durationCount = 0;        // reset interrupts count
     durationStatus = true;    // reset -> SlowImpulses interval started
@@ -79,12 +90,14 @@ void SlowImpulses::start() {
   }
 }
 
+
 void SlowImpulses::stop() {
   TIMSK1 ^= (1 << OCIE1A);    // disable timer bit 
 }
 
 
 boolean SlowImpulses::getStatus() {
+  //Serial.print("durationCount "); Serial.println(durationCount);
+  
   return durationStatus;
 }
-

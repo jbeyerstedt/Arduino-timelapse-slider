@@ -10,10 +10,11 @@
 
 
 #include "my_classes.h"
-#include <Arduino.h>
 
 
-Slider::Slider () {
+Slider::Slider (SlowImpulses *stepper) {
+  stepperInstance = *stepper;
+  
   maxPosition = maxSteps;
   slideRunning = false;
   timeIntervalStart = 0;
@@ -21,56 +22,119 @@ Slider::Slider () {
 }
 
 
-
-void Slider::setParameters (int travelTime, int triggerInterval, int slidingDirection) {
+void Slider::setParameters (int operationMode, int travelTime, int triggerInterval, int slidingDirection) {
+  mode = operationMode;
+  
   slideDir = !slidingDirection; // invert
   
-  // calculate speed (steps per interval)
-  // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
-  stepsPerSecond = maxSteps / travelTime / 60;
-
-  // duration of one interval [ms] = trigegrInterval [s] * 1000 [ms/s] - triggerDuration [ms]
-  intervalDuration = triggerInterval * 1000 - triggerDuration;
-
-  stepsPerInterval = intervalDuration / stepsPerSecond;
-
-  if (stepsPerSecond > maxVelocity) {
-    stepsPerSecond = maxVelocity;
+  switch (mode) {
+    case 1:  // TL-mode
+      // TODO 2.1 - now: workaround by simply reusing the slide mode
+      
+    case 2:  // SL-mode
+      // calculate speed (steps per interval)
+      // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
+      stepsPerSecond = maxSteps / travelTime / 60;
+      
+      // TODO: limit frequency and correct other values
+    
+      // duration of one interval [ms] = triggerInterval [s] * 1000 [ms/s] - triggerDuration [ms]
+      intervalDuration = triggerInterval * 1000 - triggerDuration;
+    
+      stepsPerInterval = intervalDuration / stepsPerSecond;
+    
+      if (stepsPerSecond > maxVelocity) {
+        stepsPerSecond = maxVelocity;
+      }
+      
+      break;
+    case 3:  // CO-mode
+      // calculate speed (steps per interval)
+      // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
+      stepsPerSecond = maxSteps / travelTime / 60;
+      
+      intervalDuration = 0;
+      
+      stepsPerInterval = 0; // TODO: another solution for keeping track of the carriage position
+      
+      break;
+    default:
+      Serial.println("ERROR: Slider::setParameters - wrong mode");
+      break;
   }
   
+  Serial.println("---- configuration of the slide: ----");
+  Serial.print("mode ");Serial.println(mode);
   Serial.print("stepsPerSecond ");Serial.println(stepsPerSecond);
   Serial.print("intervalDuration ");Serial.println(intervalDuration);
   Serial.print("stepsPerInterval ");Serial.println(stepsPerInterval);
   Serial.print("direction ");Serial.println(slideDir);
   
-  // TODO implement movie slide
+  
 }
 
 void Slider::startSlide () {
   digitalWrite(stepperSleep, HIGH);
   digitalWrite(stepperDir, slideDir);
-  slideRunning = true;
-  timeIntervalStart = 0;
+  
+  // NEW: with slow_impulses
+  //boolean stepperNoError = stepperInstance.set(stepsPerSecond, intervalDuration);
+  boolean stepperError = true; // debug
+  stepperInstance.set(4,5000); // debug
+  
+  if (stepperNoError) {
+    slideRunning = true;
+    //stepperInstance.start(); // done by update on first
+    
+  }else {
+    Serial.println("ERROR: slow_impulses::set - wrong frequency");
+    slideRunning = false;
+  }
+  
+  timeIntervalStart = 0; // TODO: is this used any more?
 }
 
 boolean Slider::update() {
   // enable slide an check for virtual endstop
   if (slideRunning == true && carriagePosition < maxPosition && carriagePosition >= 0 ) {
-    
-    if (timeIntervalStart == 0) { // slide has been started, but not executed yet
-      doSlide();
+      
+    if (slideFirstStart == 0) {
+      slideFirstStart = 1;
+      displaySymbol(slideMve);
+      
+      //stepperInstance.start();
+      stepperInstance.set(1,5000);
+      stepperInstance.start();
+      
       Serial.println("first start");
+    }else {
+      
+      int statusReturn = stepperInstance.getStatus();
+      if ( statusReturn ) {
+        // still running
+        
+        Serial.println(stepperInstance.durationCount); // debug
+
+        
+      }else {
+        
+        //carriagePosition += stepsPerInterval;
+        
+        stepperInstance.stop();
+        digitalWrite(stepperStep, LOW);
+        
+        //displaySymbol(slideTrg);
+        //camTrigger();
+        Serial.println("trigger");
+        delay(500);
+        
+        stepperInstance.start();
+      
+      }
+        
     }
-    
-    // check if one stepping interval is done
-    if ( (millis()-timeIntervalStart) >= intervalDuration ) { 
-      camTrigger();
-      doSlide();
-      return true;
-    }
-    else { // still moving
-      return true;
-    }
+      
+    return true;
 
   }else if (slideRunning == false) {
     Serial.println("ERROR: slide has not been started");
@@ -81,17 +145,6 @@ boolean Slider::update() {
   }
 }
 
-// starts stepper for one slide interval 
-void Slider::doSlide () {
-  Serial.println("retrigger tone");
-  displaySymbol(slideMve);
-  timeIntervalStart = millis();
-  //tone(stepperStep, stepsPerSecond, intervalDuration);
-  
-  //toneAC();
-  
-  carriagePosition += stepsPerInterval;
-}
 
 void Slider::camTrigger () {
   Serial.println("trigger");
@@ -101,96 +154,6 @@ void Slider::camTrigger () {
   digitalWrite(trigger, LOW);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-boolean Slider::doSteps (int dir) {
-
-  if (carriagePosition >= maxSteps ) {
-    Serial.println("virtual endstop hit");
-    return false;
-  }
-  else {
-
-    //displayNumber(103);
-    displaySymbol(slideMve);
-    // make x steps
-    for (int i = 0; i < slideStepsPerInterval; i++) {
-      // make one step
-      if (dir == 1) {
-        carriagePosition++;
-      }
-      else if (dir == 0) {
-        carriagePosition--;
-      }
-      else {
-        return false;
-      }
-    }
-
-
-    delay(1000);
-
-    Serial.println("trigger");
-    displaySymbol(slideTrg);
-    digitalWrite(trigger, HIGH);
-    delay(triggerDuration);
-    digitalWrite(trigger, LOW);
-
-    return true;
-  }
-}
-
-
-
-
-
-
-void Slider::setParametersOld (int travelTime, int triggerInterval) {
-  // calulate parameters like slide speed
-
-  // calculate velocity:  
-  // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
-  // 1000 [ms] / stepsPerSecond = timePerStep [ms/step]
-  int stepsPerSecond = maxSteps / travelTime / 60;
-  int timePerStep = 1000 / stepsPerSecond;
-  slideStepDelay = timePerStep - workingDelay;
-  if (slideStepDelay <= 0) {
-    slideStepDelay = 0;
-  } // safety that slideStepDelay is not too small
-
-  // calculate the steps per Interval
-  if (triggerInterval == 0) { // movie mode
-    slideStepsPerInterval = maxSteps;
-    Serial.println("movie mode active");
-  }
-  else { // normal timelapse operation
-
-
-
-    // a too big, but correct caculated number, will make this calculation wrong. The slider isn´t faster than 14 steps per Second 
-    if (stepsPerSecond >= 14) {
-      stepsPerSecond = 14;
-    }
-    slideStepsPerInterval = stepsPerSecond * triggerInterval;
-  }
-
-  //slideStepsPerInterval = 0;
-  //slideStepDelay = 0;
-}
 
 
 

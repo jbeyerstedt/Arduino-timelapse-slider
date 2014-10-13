@@ -116,3 +116,5 @@ more follows soon / mehr folgt bald
 	* all new rewritten version. New software concept and it´s C++ now.
 	* 3 modes for timelapse, timelapse with slider, movie
 	* 
+* TODO:
+	* remember last settings (start at last entered number for slideTime, etc.)

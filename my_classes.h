@@ -20,9 +20,13 @@
 #include <Arduino.h>
 #include "config.h"
 #include "display.h"
+#include "slow_impulses.h"
 
 
 class Slider {
+  SlowImpulses stepperInstance;
+  
+  int mode;
   int carriagePosition;
   int maxPosition;
   int slideDir;
@@ -33,23 +37,22 @@ class Slider {
   unsigned int stepsPerSecond;
   unsigned int stepsPerInterval; // helping variable for carriagePosition
   unsigned long intervalDuration;
-  unsigned long timeIntervalStart;
+  unsigned long timeIntervalStart; // deprecated
+  boolean slideFirstStart;
   
   boolean slideRunning;
-
+  
+  
   void camTrigger();
-  void doSlide();
+  
   
   public:
-    Slider ();
-    void setParameters (int travelTime, int triggerInterval, int slidingDirection);
-    void setParametersOld (int travelTime, int triggerInterval);
+    Slider (SlowImpulses *stepper);
+    
+    void setParameters (int operationMode, int travelTime, int triggerInterval, int slidingDirection);
     
     boolean update (); // returns false if end is hit, so the slide needs to be aborted
     void startSlide();
-    
-    
-    boolean doSteps (int dir); // returns false if end is hit, so the slide needs to be aborted
     
     
 };

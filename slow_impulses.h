@@ -33,6 +33,7 @@ class SlowImpulses {
     void start();        // use set first, then start. Starts a new duration cycle
     void stop();         // disables interrupt, does not reset frequency and duration
     boolean getStatus(); // returns true if duration is not due, false after duration over
+        
 };
 
 // timer compare interrupt service routine
