@@ -14,21 +14,19 @@
 
 #include <Bounce2.h>
 
-#include "slow_impulses.h"
-
 #include "config.h"
 #include "button.h"
 #include "display.h"
-
 #include "my_classes.h"
-
-#include <MemoryFree.h>
+#include "slow_impulses.h"
 
 
 int currentState = -1; // TODO: increase all state numbers by 1
 int currentMode  = 0; // 1: IN - 2: SL - 3: CO
 
 int choosenNumber = 0;
+boolean slideError = false;
+int buttonsHelper = 0; // variable to temporarly store button return values
 
 int slideTime = 1;
 int slideDirection = 0; // 1 = right, 0 = left
@@ -63,8 +61,7 @@ void setup() {
   
   digitalWrite(stepperSleep, LOW); // set stepper driver to sleep
   
-  //stepper.init(stepperStep);
-  stepper.init(10);
+  stepper.init(stepperStep);
   
   Serial.begin(9600);
 }
@@ -77,11 +74,34 @@ void loop() {
   buttonEnter.update();
   
   
+  // do something based on the case
   switch (currentState) {
+    
     case 0:  // initialize carriage position
-      // TODO
-      // set initial carriage position
-      currentState = 1;
+          
+      buttons.setInterval(0,2);
+      buttonsHelper = buttons.getValue();  
+      switch (buttonsHelper) {
+        case 1: // left
+          displaySymbol(initLeft);
+          mySlider.initCarriagePosition(0);
+          break;
+        case 2: // right
+          displaySymbol(initRigt);
+          mySlider.initCarriagePosition(maxSteps);
+          break;
+        default:
+          displaySymbol(initPos);
+          break;
+      }
+      
+      if (buttonEnter.triggered() ) {
+        Serial.print("initialDir: "); Serial.println(buttonsHelper);
+        
+        currentState = 1;
+        Serial.println("--switch to state 1");
+      }
+      
       break;
     
     case 1:  // initialization / set mode
@@ -104,6 +124,7 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
+        Serial.print("mode: "); Serial.println(currentMode);
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
@@ -163,11 +184,12 @@ void loop() {
     
     case 22:  // set total time
     case 32:
-      buttons.setInterval(0,numberLimitSlideTime);
+      buttons.setInterval(1,numberLimitSlideTime);
       slideTime = buttons.getValue();
       displayNumber(slideTime);
       
       if (buttonEnter.triggered() ) {
+        Serial.print("slideTime: "); Serial.println(slideTime);
         switch (currentMode) {
           case 2: // SL
             buttons.reset();
@@ -200,6 +222,7 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
+        Serial.print("slideDirection: "); Serial.println(slideDirection);
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
@@ -227,11 +250,12 @@ void loop() {
     
     case 12:  // set trigger interval
     case 24:
-      buttons.setInterval(0,numberLimitTriggerTime);
+      buttons.setInterval(1,numberLimitTriggerTime);
       triggerInterval = buttons.getValue();
       displayNumber(triggerInterval);
       
       if (buttonEnter.triggered() ) {
+        Serial.print("triggerInterval: "); Serial.println(triggerInterval);
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
@@ -255,7 +279,7 @@ void loop() {
     case 14:  // prespare data / set slide parameters
     case 25:
     case 34:
-      Serial.println("--- data preparation (state 14, 25, 35)");
+      Serial.println("--- data preparation");
       displaySymbol(waitGo);
       
       switch (currentMode) {
@@ -269,6 +293,7 @@ void loop() {
           break;
         case 2: // SL
           // TODO
+          
           mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
@@ -294,6 +319,8 @@ void loop() {
     case 15:  // wait for go
     case 26:
     case 35:
+      
+      
       
       if (buttonEnter.triggered() ) {
         switch (currentMode) {
@@ -327,32 +354,36 @@ void loop() {
     case 16:  // supervise slide operation
     case 27:
     case 36:
-      // TODO
-      // supervise slide
-      
-      //Serial.print("durationCount "); Serial.println(stepper.durationCount);
-      
+                  
       if ( mySlider.update() ) {
         // normal operation
+        slideError = false;
       }else {
-        Serial.println("ERROR: virtual endstop hit - slide aborted");
+        // virtual endstop hit
+        slideError = true;
       }
       
       
-      if (buttonEnter.triggered() ) {
+      if (buttonEnter.triggered() || (slideError) ) {
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
+            mySlider.stopSlide();
+            
             currentState = 11;
             Serial.println("--switch to state 11");
             break;
           case 2: // SL
             buttons.reset();
+            mySlider.stopSlide();
+            
             currentState = 21;
             Serial.println("--switch to state 21");
             break;
           case 3: // CO
             buttons.reset();
+            mySlider.stopSlide();
+            
             currentState = 31;
             Serial.println("--switch to state 31");
             break;
@@ -362,6 +393,7 @@ void loop() {
             Serial.println("ERROR: no mode set -> reset");
             break;
         }
+        
       }
       break;
     
@@ -375,7 +407,6 @@ void loop() {
   }
   
   
-  
 }
 
 
@@ -386,17 +417,12 @@ void loop() {
 // must be in main file / can´t figure out how to do it in the impulse.h or impule.cpp
 ISR(TIMER1_COMPA_vect)
 { 
-  stepper.durationCount++;
-//  if (stepper.durationCount <= stepper.durationCompare ) {
-//    stepper.durationCount++;
-//    digitalWrite(stepper.pinNo, digitalRead(stepper.pinNo) ^ 1);
-//  }else {
-//    stepper.durationStatus = false;
-//    stepper.stop();
-//  }
+  if (stepper.durationCount < stepper.durationCompare ) {
+    stepper.durationCount++;
+    digitalWrite(stepper.pinNo, digitalRead(stepper.pinNo) ^ 1);
+  }else {
+    stepper.durationStatus = false;
+    stepper.stop();
+  }
   
 }
-
-
-
-
