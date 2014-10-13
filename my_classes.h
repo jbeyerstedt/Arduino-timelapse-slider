@@ -24,23 +24,18 @@
 
 
 class Slider {
-  SlowImpulses stepperInstance;
+  SlowImpulses *stepperInstance;
   
-  int mode;
-  int carriagePosition;
+  int mode;                       // operation mode: TL, SL, CO
+  int carriagePosition;           // 0 is left position
   int maxPosition;
-  int slideDir;
+  int slideDir;                   // 1 = left, 0 = right
   
-  int slideStepsPerInterval;
-  int slideStepDelay;
-  
-  unsigned int stepsPerSecond;
-  unsigned int stepsPerInterval; // helping variable for carriagePosition
-  unsigned long intervalDuration;
-  unsigned long timeIntervalStart; // deprecated
-  boolean slideFirstStart;
-  
-  boolean slideRunning;
+  unsigned int stepsPerSecond;    // frequency for output
+  unsigned long intervalDuration; // duration for output
+  unsigned int stepsPerInterval;  // helping variable for carriagePosition
+
+  boolean slideRunning;           // helper for error and misuse management
   
   
   void camTrigger();
@@ -48,13 +43,16 @@ class Slider {
   
   public:
     Slider (SlowImpulses *stepper);
-    
+  
+    void initCarriagePosition(unsigned int position);
+  
     void setParameters (int operationMode, int travelTime, int triggerInterval, int slidingDirection);
-    
+  
+    // needs to be executed every cycle of the main loop
     boolean update (); // returns false if end is hit, so the slide needs to be aborted
+  
     void startSlide();
-    
-    
+    void stopSlide();
 };
 
 

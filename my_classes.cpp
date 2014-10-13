@@ -13,12 +13,16 @@
 
 
 Slider::Slider (SlowImpulses *stepper) {
-  stepperInstance = *stepper;
+  stepperInstance = stepper;
   
   maxPosition = maxSteps;
   slideRunning = false;
-  timeIntervalStart = 0;
   slideDir = 1;
+}
+
+
+void Slider::initCarriagePosition(unsigned int pos) {
+  carriagePosition = pos;
 }
 
 
@@ -35,17 +39,15 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
       // calculate speed (steps per interval)
       // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
       stepsPerSecond = maxSteps / travelTime / 60;
-      
-      // TODO: limit frequency and correct other values
-    
+          
       // duration of one interval [ms] = triggerInterval [s] * 1000 [ms/s] - triggerDuration [ms]
       intervalDuration = triggerInterval * 1000 - triggerDuration;
-    
-      stepsPerInterval = intervalDuration / stepsPerSecond;
-    
+      
       if (stepsPerSecond > maxVelocity) {
         stepsPerSecond = maxVelocity;
       }
+      
+      stepsPerInterval = intervalDuration * stepsPerSecond / 1000;
       
       break;
     case 3:  // CO-mode
@@ -69,7 +71,7 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
   Serial.print("intervalDuration ");Serial.println(intervalDuration);
   Serial.print("stepsPerInterval ");Serial.println(stepsPerInterval);
   Serial.print("direction ");Serial.println(slideDir);
-  
+  Serial.println("----- end config slide ----");
   
 }
 
@@ -78,60 +80,47 @@ void Slider::startSlide () {
   digitalWrite(stepperDir, slideDir);
   
   // NEW: with slow_impulses
-  //boolean stepperNoError = stepperInstance.set(stepsPerSecond, intervalDuration);
-  boolean stepperError = true; // debug
-  stepperInstance.set(4,5000); // debug
+  boolean stepperNoError = stepperInstance->set(stepsPerSecond, intervalDuration);
   
   if (stepperNoError) {
+    // workaround for bad position tracking
+    if (carriagePosition < 0) {
+      carriagePosition = 0;
+    }else if (carriagePosition > maxPosition) {
+      carriagePosition = maxPosition;
+    }
+    
     slideRunning = true;
-    //stepperInstance.start(); // done by update on first
+    stepperInstance->start();
+    displaySymbol(slideMve);
     
   }else {
     Serial.println("ERROR: slow_impulses::set - wrong frequency");
     slideRunning = false;
   }
   
-  timeIntervalStart = 0; // TODO: is this used any more?
 }
+
 
 boolean Slider::update() {
   // enable slide an check for virtual endstop
   if (slideRunning == true && carriagePosition < maxPosition && carriagePosition >= 0 ) {
-      
-    if (slideFirstStart == 0) {
-      slideFirstStart = 1;
-      displaySymbol(slideMve);
-      
-      //stepperInstance.start();
-      stepperInstance.set(1,5000);
-      stepperInstance.start();
-      
-      Serial.println("first start");
+    
+    if (stepperInstance->getStatus()) {
+      // still running, do nothing
     }else {
+      stepperInstance->stop();
+        
+      camTrigger();
       
-      int statusReturn = stepperInstance.getStatus();
-      if ( statusReturn ) {
-        // still running
-        
-        Serial.println(stepperInstance.durationCount); // debug
-
-        
+      stepperInstance->start();
+      
+      if (slideDir == 0) { // right
+        carriagePosition += stepsPerInterval;
       }else {
-        
-        //carriagePosition += stepsPerInterval;
-        
-        stepperInstance.stop();
-        digitalWrite(stepperStep, LOW);
-        
-        //displaySymbol(slideTrg);
-        //camTrigger();
-        Serial.println("trigger");
-        delay(500);
-        
-        stepperInstance.start();
-      
+        carriagePosition -= stepsPerInterval;
       }
-        
+      Serial.print("---- current position: "); Serial.println(carriagePosition);
     }
       
     return true;
@@ -140,9 +129,14 @@ boolean Slider::update() {
     Serial.println("ERROR: slide has not been started");
     return false;
   }else {
-    Serial.println("ERROR: endstop hit");
+    Serial.println("ERROR: virtual endstop hit - slide aborted");
     return false;
   }
+}
+
+
+void Slider::stopSlide () {
+  stepperInstance->stop();
 }
 
 
