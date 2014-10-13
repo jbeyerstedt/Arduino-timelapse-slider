@@ -14,14 +14,18 @@
 
 #include <Bounce2.h>
 
+#include "slow_impulses.h"
+
 #include "config.h"
 #include "button.h"
 #include "display.h"
+
 #include "my_classes.h"
-#include "slow_impulses.h"
+
+#include <MemoryFree.h>
 
 
-int currentState = 0; 
+int currentState = -1; // TODO: increase all state numbers by 1
 int currentMode  = 0; // 1: IN - 2: SL - 3: CO
 
 int choosenNumber = 0;
@@ -33,12 +37,12 @@ int triggerInterval = 0;
 
 
 ButtonPair buttons (buttonPlusPin, buttonMinusPin);
-//Button buttonEnter (buttonPlusPin); // for a normally working button
+//Button buttonEnter (buttonEnterPin); // for a normally working button
 Button2 buttonEnter (buttonEnterPin); // special for my broken button
 
 SlowImpulses stepper;
 
-Slider mySlider;
+Slider mySlider(&stepper);
 
 
 void setup() {
@@ -59,6 +63,9 @@ void setup() {
   
   digitalWrite(stepperSleep, LOW); // set stepper driver to sleep
   
+  //stepper.init(stepperStep);
+  stepper.init(10);
+  
   Serial.begin(9600);
 }
 
@@ -71,6 +78,12 @@ void loop() {
   
   
   switch (currentState) {
+    case 0:  // initialize carriage position
+      // TODO
+      // set initial carriage position
+      currentState = 1;
+      break;
+    
     case 1:  // initialization / set mode
       buttons.setInterval(0,3);
       currentMode = buttons.getValue();
@@ -248,7 +261,7 @@ void loop() {
       switch (currentMode) {
         case 1: // IN
           // TODO
-          //mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
           currentState = 15;
@@ -256,7 +269,7 @@ void loop() {
           break;
         case 2: // SL
           // TODO
-          mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
           currentState = 26;
@@ -264,7 +277,7 @@ void loop() {
           break;
         case 3: // CO
           // TODO
-          //mySlider.setParameters(slideTime, triggerInterval, slideDirection);
+          //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
           currentState = 35;
@@ -281,25 +294,24 @@ void loop() {
     case 15:  // wait for go
     case 26:
     case 35:
-      // TODO do slide
-      // mySlider.startSlide();
-      
-      
       
       if (buttonEnter.triggered() ) {
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
+            mySlider.startSlide();
             currentState = 16;
             Serial.println("--switch to state 16");
             break;
           case 2: // SL
             buttons.reset();
+            mySlider.startSlide();
             currentState = 27;
             Serial.println("--switch to state 27");
             break;
           case 3: // CO
             buttons.reset();
+            mySlider.startSlide();
             currentState = 36;
             Serial.println("--switch to state 36");
             break;
@@ -317,6 +329,8 @@ void loop() {
     case 36:
       // TODO
       // supervise slide
+      
+      //Serial.print("durationCount "); Serial.println(stepper.durationCount);
       
       if ( mySlider.update() ) {
         // normal operation
@@ -355,10 +369,12 @@ void loop() {
       // initialise all systems - get mode
       // or something wrong happened
       Serial.println("--reset (default case)");
-      currentState = 1;
+      currentState = 0;
       
       break;
   }
+  
+  
   
 }
 
@@ -370,13 +386,14 @@ void loop() {
 // must be in main file / can´t figure out how to do it in the impulse.h or impule.cpp
 ISR(TIMER1_COMPA_vect)
 { 
-  if (stepper.durationCount <= stepper.durationCompare ) {
-    stepper.durationCount++;
-    digitalWrite(stepper.pinNo, digitalRead(stepper.pinNo) ^ 1);
-  }else {
-    stepper.durationStatus = false;
-    stepper.stop();
-  }
+  stepper.durationCount++;
+//  if (stepper.durationCount <= stepper.durationCompare ) {
+//    stepper.durationCount++;
+//    digitalWrite(stepper.pinNo, digitalRead(stepper.pinNo) ^ 1);
+//  }else {
+//    stepper.durationStatus = false;
+//    stepper.stop();
+//  }
   
 }
 
