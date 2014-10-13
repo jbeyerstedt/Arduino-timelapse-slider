@@ -24,7 +24,7 @@
 
 
 class Slider {
-  SlowImpulses stepperInstance;
+  SlowImpulses *stepperInstance;
   
   int mode;
   int carriagePosition;

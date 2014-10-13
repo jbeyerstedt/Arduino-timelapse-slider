@@ -13,7 +13,7 @@
 
 
 Slider::Slider (SlowImpulses *stepper) {
-  stepperInstance = *stepper;
+  stepperInstance = stepper;
   
   maxPosition = maxSteps;
   slideRunning = false;
@@ -79,12 +79,12 @@ void Slider::startSlide () {
   
   // NEW: with slow_impulses
   //boolean stepperNoError = stepperInstance.set(stepsPerSecond, intervalDuration);
-  boolean stepperError = true; // debug
-  stepperInstance.set(4,5000); // debug
+  boolean stepperNoError = true; // debug
+  stepperInstance->set(4,5000); // debug
   
   if (stepperNoError) {
     slideRunning = true;
-    //stepperInstance.start(); // done by update on first
+    stepperInstance->start(); // done by update on first
     
   }else {
     Serial.println("ERROR: slow_impulses::set - wrong frequency");
@@ -103,24 +103,24 @@ boolean Slider::update() {
       displaySymbol(slideMve);
       
       //stepperInstance.start();
-      stepperInstance.set(1,5000);
-      stepperInstance.start();
+      stepperInstance->set(1,5000);
+      stepperInstance->start();
       
       Serial.println("first start");
     }else {
       
-      int statusReturn = stepperInstance.getStatus();
+      int statusReturn = stepperInstance->getStatus();
       if ( statusReturn ) {
         // still running
         
-        Serial.println(stepperInstance.durationCount); // debug
+        //Serial.println(stepperInstance.durationCount); // debug
 
         
       }else {
         
         //carriagePosition += stepsPerInterval;
         
-        stepperInstance.stop();
+        stepperInstance->stop();
         digitalWrite(stepperStep, LOW);
         
         //displaySymbol(slideTrg);
@@ -128,7 +128,7 @@ boolean Slider::update() {
         Serial.println("trigger");
         delay(500);
         
-        stepperInstance.start();
+        stepperInstance->start();
       
       }
         
