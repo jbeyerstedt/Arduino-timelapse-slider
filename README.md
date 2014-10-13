@@ -103,7 +103,15 @@ more follows soon / mehr folgt bald
 * coded as finite state machine
 * 3 modes for timelapse, timelapse with slider, movie
 * virtual endstops
-* TODO
+* steps are done in the background
+	* faster stepping possible
+	* more responsive exit from slide
+* set initial carriage position
+
+#### planned for version 2.1
+* better virtual endstop methods
+* remember last settings (start at last entered number for slideTime, etc.)
+
 
 
 ## changelog
@@ -115,6 +123,22 @@ more follows soon / mehr folgt bald
 * 2.0:
 	* all new rewritten version. New software concept and it´s C++ now.
 	* 3 modes for timelapse, timelapse with slider, movie
+	* classes for:
+		* the slider (carriage)
+		* the stepper motort
+		* the buttons
+	* display.h restructured and enhanced:
+		* "dynamic" calcualtion of the symbols
+		* new function for symbols only
+		* number function does ONLY numbers now
+		* number function can do negative numbers up to -9
 	* 
+	
 * TODO:
 	* remember last settings (start at last entered number for slideTime, etc.)
+	* virtual endstops
+		* test the thing!
+		* better method
+	* increment all state numbers
+	* delete special debug code
+	* functionality for movie and timelapse mode
