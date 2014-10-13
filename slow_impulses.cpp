@@ -92,7 +92,8 @@ void SlowImpulses::start() {
 
 
 void SlowImpulses::stop() {
-  TIMSK1 ^= (1 << OCIE1A);    // disable timer bit 
+  TIMSK1 ^= (1 << OCIE1A);    // disable timer bit
+  digitalWrite(pinNo, LOW);   // disable output
 }
 
 
