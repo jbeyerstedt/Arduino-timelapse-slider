@@ -3,7 +3,8 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.0 beta1 (dd.mm.yyyy)
+ * display library:
+ * version 2.0.0 (19.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -11,14 +12,10 @@
 /*
   library for displaying numbers and specific symbols on 2 7-segment-displays
   
-  usage: displayNum = 
-  0 - 99 -> normal decimal number
-  100    -> symbol: slide direction 0 (right)
-  101    -> symbol: slide direction 1 (left)
-  102    -> symbol: wait for an input to start (Go)
-  103    -> symbol: carriage is moving
-  104    -> symbol: camera is being triggered
-  111    -> symbol: value entered
+  usage: 
+  - enter your shift-register to 7-segment-display configuration
+  - displayNumber: displays a number
+  - displaySymbol: gets a enum constant and displays this symbol
 */
 
 
