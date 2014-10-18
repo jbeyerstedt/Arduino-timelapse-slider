@@ -3,7 +3,11 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.0 beta1 (dd.mm.yyyy)
+ * for debouncing the buttons the Bounce2 library is used. Download it here:
+ * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
+ * 
+ * buttons library:
+ * version 2.0.0 (19.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -34,9 +38,16 @@ boolean ButtonPair::readPin() {
   return (analogRead(pinPlus) > readThreshold);
 }
 
-void ButtonPair::setInterval (int minimum, int maximum) {
-  minValue = minimum;
-  maxValue = maximum;
+void ButtonPair::setInterval (int intervalStart, int intervalEnd) {
+  minValue = intervalStart;
+  maxValue = intervalEnd;
+  retriggerOnHoldInt = fastCountInterval;
+}
+
+void ButtonPair::setInterval (int intervalStart, int intervalEnd, int manualFastInterval) {
+  minValue = intervalStart;
+  maxValue = intervalEnd;
+  retriggerOnHoldInt = manualFastInterval;
 }
 
 void ButtonPair::update () {
@@ -57,7 +68,7 @@ void ButtonPair::update () {
     }
   }
   if (plusState == 1) {
-    if (millis() - plusTimeStamp >= fastCountInterval ) {
+    if (millis() - plusTimeStamp >= retriggerOnHoldInt ) {
       plusTimeStamp = millis();
       value++;
     }
@@ -77,7 +88,7 @@ void ButtonPair::update () {
     }
   }
   if (minusState == 1) {
-    if (millis() - minusTimeStamp >= fastCountInterval ) {
+    if (millis() - minusTimeStamp >= retriggerOnHoldInt ) {
       minusTimeStamp = millis();
       value--;
     }

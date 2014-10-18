@@ -3,7 +3,11 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.0 beta1 (dd.mm.yyyy)
+ * for debouncing the buttons the Bounce2 library is used. Download it here:
+ * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
+ * 
+ * buttons library:
+ * version 2.0.0 (19.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -24,6 +28,7 @@ class ButtonPair {
   int pinMinus;
   int minValue;
   int maxValue;
+  int retriggerOnHoldInt;
   
   int value;
   
@@ -40,7 +45,8 @@ class ButtonPair {
   
   public:
     ButtonPair(int PlusPin, int MinusPin);  
-    void setInterval (int start, int end);
+    void setInterval (int intervalStart, int intervalEnd);
+    void setInterval (int intervalStart, int intervalEnd, int manualFastInterval); // override fastCountInterval of config.h
     int getValue ();
     void update ();
     void reset();
