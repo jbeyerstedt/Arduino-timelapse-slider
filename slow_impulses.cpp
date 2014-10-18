@@ -8,6 +8,7 @@
  * v1.0 (05.10.2014)
  */
 
+
 #include "slow_impulses.h"
 
  
@@ -18,9 +19,7 @@ SlowImpulses::SlowImpulses() {
 }
 
 
-void SlowImpulses::init(int pin) {
-  Serial.println("SlowImpulses::init"); // debug
-  
+void SlowImpulses::init(int pin) {  
   pinNo = pin;             // save pin for later use
   
   noInterrupts();          // disable all interrupts
@@ -54,9 +53,7 @@ void SlowImpulses::init(int pin) {
 }
 
 
-boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
-  Serial.println("SlowImpulses::set"); // debug
-  
+boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {  
   TCNT1 = 0;               // reset counter register
   
   timerCompareVal = CPU_FREQU / PRESCALER / frequency / FUNCT_PERIOD;
@@ -70,19 +67,14 @@ boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
   
   // max number of interrupts = desired duration[s] * desired frequency
   durationCompare = (duration/1000) * frequency;
-  
-  Serial.print("durationCompare "); Serial.println(durationCompare); // debug
-  Serial.print("timerCompareVal "); Serial.println(timerCompareVal); // debug
-  
+    
   durationStatus = false;    // false -> SlowImpulses interval not started
   
   return no_error;
 }
 
 
-void SlowImpulses::start() {
-  Serial.println("SlowImpulses::start"); // debug
-  
+void SlowImpulses::start() {  
   if (no_error) {             // prevent executing with invalid values
     durationCount = 0;        // reset interrupts count
     durationStatus = true;    // reset -> SlowImpulses interval started
@@ -97,8 +89,6 @@ void SlowImpulses::stop() {
 }
 
 
-boolean SlowImpulses::getStatus() {
-  //Serial.print("durationCount "); Serial.println(durationCount);
-  
+boolean SlowImpulses::getStatus() {  
   return durationStatus;
 }

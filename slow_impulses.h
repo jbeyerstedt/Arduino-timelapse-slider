@@ -8,6 +8,7 @@
  * v1.0 (05.10.2014)
  */
  
+ 
 #ifndef __SLOW_IMPULSES__
 #define __SLOW_IMPULSES__
 
