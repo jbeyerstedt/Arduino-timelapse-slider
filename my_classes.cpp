@@ -3,7 +3,7 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.0 beta1 (dd.mm.yyyy)
+ * version 2.0.0 beta1 (19.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -29,7 +29,11 @@ void Slider::initCarriagePosition(unsigned int pos) {
 void Slider::setParameters (int operationMode, int travelTime, int triggerInterval, int slidingDirection) {
   mode = operationMode;
   
-  slideDir = !slidingDirection; // invert
+  #ifdef INVERT_STEPPER_DIR
+    slideDir = !slidingDirection; // invert if necessary
+  #else
+    slideDir = slidingDirection;
+  #endif
   
   switch (mode) {
     case 1:  // TL-mode
@@ -65,13 +69,14 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
       break;
   }
   
-  Serial.println("---- configuration of the slide: ----");
-  Serial.print("mode ");Serial.println(mode);
-  Serial.print("stepsPerSecond ");Serial.println(stepsPerSecond);
+  
+  Serial.println("\n---- configuration of the slide: ----");
+  Serial.print("mode             ");Serial.println(mode);
+  Serial.print("stepsPerSecond   ");Serial.println(stepsPerSecond);
   Serial.print("intervalDuration ");Serial.println(intervalDuration);
   Serial.print("stepsPerInterval ");Serial.println(stepsPerInterval);
-  Serial.print("direction ");Serial.println(slideDir);
-  Serial.println("----- end config slide ----");
+  Serial.print("direction        ");Serial.println(slideDir);
+  Serial.println("----- end config slide ----\n");
   
 }
 
@@ -79,10 +84,8 @@ void Slider::startSlide () {
   digitalWrite(stepperSleep, HIGH);
   digitalWrite(stepperDir, slideDir);
   
-  // NEW: with slow_impulses
-  boolean stepperNoError = stepperInstance->set(stepsPerSecond, intervalDuration);
-  
-  if (stepperNoError) {
+  // NEW: with slow_impulses  
+  if ( stepperInstance->set(stepsPerSecond, intervalDuration) ) {
     // workaround for bad position tracking
     if (carriagePosition < 0) {
       carriagePosition = 0;
@@ -90,9 +93,14 @@ void Slider::startSlide () {
       carriagePosition = maxPosition;
     }
     
-    slideRunning = true;
-    stepperInstance->start();
-    displaySymbol(slideMve);
+    // check position: enough space for one sequence ?
+    if ( (carriagePosition) < maxPosition && (carriagePosition) >= 0 ) {
+      slideRunning = true;
+      stepperInstance->start();
+      displaySymbol(slideMve);
+    }else {
+      Serial.println("ERROR: virtual endstop hit - slide aborted");
+    }
     
   }else {
     Serial.println("ERROR: slow_impulses::set - wrong frequency");
@@ -112,6 +120,7 @@ boolean Slider::update() {
       stepperInstance->stop();
         
       camTrigger();
+      displaySymbol(slideMve);
       
       stepperInstance->start();
       
@@ -149,6 +158,36 @@ void Slider::camTrigger () {
 }
 
 
+void Slider::manualRight() {
+  
+  if ( carriagePosition+1 < maxPosition && carriagePosition >= 0 ) {
+    carriagePosition++;
+    #ifdef INVERT_STEPPER_DIR
+      digitalWrite(stepperDir, 0);
+    #else
+      digitalWrite(stepperDir, 1);
+    #endif
+    digitalWrite(stepperStep, HIGH);
+    digitalWrite(stepperStep, LOW);
+  }else {
+    Serial.println("ERROR: manualRight: virtual endstop hit - slide aborted");
+  }
+}
+
+void Slider::manualLeft() {
+  if ( carriagePosition < maxPosition && carriagePosition-1 >= 0 ) {
+    carriagePosition--;
+    #ifdef INVERT_STEPPER_DIR
+      digitalWrite(stepperDir, 1);
+    #else
+      digitalWrite(stepperDir, 0);
+    #endif
+    digitalWrite(stepperStep, HIGH);
+    digitalWrite(stepperStep, LOW);
+  }else {
+    Serial.println("ERROR: manualLeft: virtual endstop hit - slide aborted");
+  }
+}
 
 
 
