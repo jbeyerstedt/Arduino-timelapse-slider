@@ -71,7 +71,7 @@ Symbols:
 - ┌ ┐ -> moving carriage
 - [ ] -> triggering camera
 - – –  -> waiting for next triggering (interval trigger mode only)
-- Id -> idle/ manual drive possible
+- . -> idle/ manual drive possible
 
    
 **deutsch:**  
@@ -100,6 +100,7 @@ more follows soon / mehr folgt bald
 * (more or less) smart symbols on the display indicating the direction, current mode and errors
 
 #### additional in version 2.0
+* INFO: movie and interval mode are disabeled until ready in v2.1
 * coded as finite state machine
 * 3 modes for timelapse, timelapse with slider, movie
 * virtual endstops
@@ -109,6 +110,7 @@ more follows soon / mehr folgt bald
 * set initial carriage position
 
 #### planned for version 2.1
+* functionality for movie and timelapse mode
 * better virtual endstop methods
 * remember last settings (start at last entered number for slideTime, etc.)
 
@@ -120,7 +122,8 @@ more follows soon / mehr folgt bald
 	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
 * 1.0.2:  
 	* little modification at big slide times
-* 2.0:
+* 2.0 beta1 :
+	* INFO: movie and interval mode are disabeled until ready in v2.1
 	* all new rewritten version. New software concept and it´s C++ now.
 	* 3 modes for timelapse, timelapse with slider, movie
 	* classes for:
@@ -132,13 +135,11 @@ more follows soon / mehr folgt bald
 		* new function for symbols only
 		* number function does ONLY numbers now
 		* number function can do negative numbers up to -9
-	* 
+	* enter start position (for virtual endstops)
+	* move carriage with plus and minus buttons (for position counting)
 	
 * TODO:
-	* remember last settings (start at last entered number for slideTime, etc.)
 	* virtual endstops
-		* test the thing!
 		* better method
-	* increment all state numbers
-	* delete special debug code
-	* functionality for movie and timelapse mode
+	* !! functionality for movie and timelapse mode
+	* remember last settings (start at last entered number for slideTime, etc.)
