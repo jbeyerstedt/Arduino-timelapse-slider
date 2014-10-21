@@ -80,7 +80,8 @@ void loop() {
   switch (currentState) {
     
     case 1:  // initialize carriage position
-          
+      
+      // TODO: change input method - display dir symbols only if button was hit !?
       buttons.setInterval(0,2);
       buttonsHelper = buttons.getValue();  
       switch (buttonsHelper) {
@@ -121,7 +122,6 @@ void loop() {
           break;
         default:
           displaySymbol(waitInput);
-          //Serial.println("no mode set");
           break;
       }
       
@@ -157,7 +157,7 @@ void loop() {
     case 32:
       displaySymbol(waitIdle);
       
-      buttons.setInterval(-maxSteps ,maxSteps, 10);
+      buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
       buttonsHelper = buttons.getValue();
       
       digitalWrite(stepperSleep, HIGH);
@@ -299,7 +299,7 @@ void loop() {
       
       switch (currentMode) {
         case 1: // IN
-          // TODO
+          // TODO: functionality in Slider::setParameters special for IN-mode
           //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
@@ -307,8 +307,6 @@ void loop() {
           Serial.println("--switch to state 16");
           break;
         case 2: // SL
-          // TODO
-          
           mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
@@ -316,7 +314,7 @@ void loop() {
           Serial.println("--switch to state 27");
           break;
         case 3: // CO
-          // TODO
+          // TODO: functionality in Slider::setParameters special for CO-mode
           //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();

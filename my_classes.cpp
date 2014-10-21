@@ -37,7 +37,7 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
   
   switch (mode) {
     case 1:  // TL-mode
-      // TODO 2.1 - now: workaround by simply reusing the slide mode
+      // TODO: write a function with millis() to do camTrigger() each interval.
       
     case 2:  // SL-mode
       // calculate speed (steps per interval)
@@ -175,7 +175,7 @@ void Slider::manualRight() {
 }
 
 void Slider::manualLeft() {
-  if ( carriagePosition < maxPosition && carriagePosition-1 >= 0 ) {
+  if ( carriagePosition <= maxPosition && carriagePosition-1 > 0 ) {
     carriagePosition--;
     #ifdef INVERT_STEPPER_DIR
       digitalWrite(stepperDir, 1);

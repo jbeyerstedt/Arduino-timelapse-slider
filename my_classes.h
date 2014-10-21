@@ -30,7 +30,7 @@ class Slider {
   int mode;                       // operation mode: TL, SL, CO
   int carriagePosition;           // 0 is left position
   int maxPosition;
-  int slideDir;                   // 1 = left, 0 = right
+  int slideDir;                   // 1 = left, 0 = right (for pololu stepper driver)
   
   unsigned int stepsPerSecond;    // frequency for output
   unsigned long intervalDuration; // duration for output
