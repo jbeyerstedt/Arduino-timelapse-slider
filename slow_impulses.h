@@ -5,7 +5,9 @@
  *
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
- * v1.0 (05.10.2014)
+ * v1.0.1 (22.10.2014)
+ * 
+ * v1.0.1: bugfix: interval frequency was only half as desired
  */
  
  

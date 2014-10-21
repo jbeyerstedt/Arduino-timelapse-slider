@@ -5,7 +5,7 @@
  *
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
- * v1.0 (05.10.2014)
+ * v1.0.1 (22.10.2014)
  */
 
 
@@ -65,8 +65,8 @@ boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
     no_error = false;
   }
   
-  // max number of interrupts = desired duration[s] * desired frequency
-  durationCompare = (duration/1000) * frequency;
+  // max number of interrupts = desired duration[s] * desired frequency * FUNCT_PERIOD
+  durationCompare = (duration/1000) * frequency * FUNCT_PERIOD;
     
   durationStatus = false;    // false -> SlowImpulses interval not started
   
