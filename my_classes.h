@@ -52,8 +52,8 @@ class Slider {
     // needs to be executed every cycle of the main loop
     boolean update (); // returns false if end is hit, so the slide needs to be aborted
   
-    void startSlide();
-    void stopSlide();
+    void startSequence();
+    void stopSequence();
     
     void manualRight();
     void manualLeft();

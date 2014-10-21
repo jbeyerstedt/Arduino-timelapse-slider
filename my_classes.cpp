@@ -80,71 +80,137 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
   
 }
 
-void Slider::startSlide () {
-  digitalWrite(stepperSleep, HIGH);
-  digitalWrite(stepperDir, slideDir);
+void Slider::startSequence () {
+  int nextPosition = 0;
   
-  // NEW: with slow_impulses  
-  if ( stepperInstance->set(stepsPerSecond, intervalDuration) ) {
-    // workaround for bad position tracking
-    if (carriagePosition < 0) {
-      carriagePosition = 0;
-    }else if (carriagePosition > maxPosition) {
-      carriagePosition = maxPosition;
-    }
+  switch (mode) {
+    case 1:  // TL-mode
+      // TODO: write a function with millis() to do camTrigger() each interval.
+      
+      break;
     
-    // check position: enough space for one sequence ?
-    if ( (carriagePosition) < maxPosition && (carriagePosition) >= 0 ) {
-      slideRunning = true;
-      stepperInstance->start();
-      displaySymbol(slideMve);
-    }else {
-      Serial.println("ERROR: virtual endstop hit - slide aborted");
-    }
+    case 2:  // SL-mode
+      digitalWrite(stepperSleep, HIGH);
+      digitalWrite(stepperDir, slideDir);
+      
+      if ( stepperInstance->set(stepsPerSecond, intervalDuration) ) {
+        
+        // workaround for bad position tracking
+//        if (carriagePosition < 0) {
+//          carriagePosition = 0;
+//        }else if (carriagePosition > maxPosition) {
+//          carriagePosition = maxPosition;
+//        }
+        
+        // check position: calculate next position
+        switch (slideDir) {
+          case 0: // right +
+            nextPosition = carriagePosition + stepsPerInterval;
+            break;
+          case 1: // left -
+            nextPosition = carriagePosition - stepsPerInterval;
+            break;
+          default:
+            Serial.println("ERROR: Slider::startSequence - wrong slideDir");
+            break;
+        }
+        
+        // check position: enough space for one sequence ?
+        if ( (nextPosition >= 0) && (nextPosition <= maxPosition) ) {
+          slideRunning = true;
+          
+          carriagePosition = nextPosition;
+          stepperInstance->start();
+          displaySymbol(slideMve);
+          Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
+        }else {
+          slideRunning = false;
+          Serial.println("ERROR: virtual endstop hit - slide aborted");
+        }
+        
+      }else {
+        Serial.println("ERROR: slow_impulses::set - wrong frequency");
+        slideRunning = false;
+      }
+      
+      break;
     
-  }else {
-    Serial.println("ERROR: slow_impulses::set - wrong frequency");
-    slideRunning = false;
+    case 3:  // CO-mode
+      
+      break;
+    
+    default:
+      Serial.println("ERROR: Slider::startSequence - wrong mode");
+      break;
   }
-  
 }
 
 
 boolean Slider::update() {
-  // enable slide an check for virtual endstop
-  if (slideRunning == true && carriagePosition < maxPosition && carriagePosition >= 0 ) {
+  if (slideRunning == true) {
+  
+    int nextPosition = 0;
     
-    if (stepperInstance->getStatus()) {
-      // still running, do nothing
-    }else {
-      stepperInstance->stop();
+    switch (mode) {
+      case 1:  // TL-mode
+        // TODO: write a function with millis() to do camTrigger() each interval.
         
-      camTrigger();
-      displaySymbol(slideMve);
-      
-      stepperInstance->start();
-      
-      if (slideDir == 0) { // right
-        carriagePosition += stepsPerInterval;
-      }else {
-        carriagePosition -= stepsPerInterval;
-      }
-      Serial.print("---- current position: "); Serial.println(carriagePosition);
+        break;
+        
+      case 2:  // SL-mode
+        
+        // check position: calculate next position
+        switch (slideDir) {
+          case 0: // right +
+            nextPosition = carriagePosition + stepsPerInterval;
+            break;
+          case 1: // left -
+            nextPosition = carriagePosition - stepsPerInterval;
+            break;
+          default:
+            Serial.println("ERROR: Slider::update - wrong slideDir");
+            break;
+        }
+        
+        // check if sequence is still running
+        if (stepperInstance->getStatus()) {
+          // still running, do nothing
+        }else {
+          stepperInstance->stop();
+          
+          camTrigger();
+          
+          // check position: enough space for one sequence ?
+          if ( (nextPosition >= 0) && (nextPosition <= maxPosition) ) {
+            carriagePosition = nextPosition;
+            stepperInstance->start();
+            displaySymbol(slideMve);
+          }else {
+            slideRunning = false;
+            Serial.println("ERROR: virtual endstop hit - slide aborted");
+          }
+          Serial.print("---- current position: "); Serial.println(carriagePosition);
+        }
+        
+        break;
+        
+      case 3:  // CO-mode
+        
+        break;
+        
+      default:
+        Serial.println("ERROR: Slider::startSequence - wrong mode");
+        break;
     }
-      
-    return true;
-
-  }else if (slideRunning == false) {
-    Serial.println("ERROR: slide has not been started");
-    return false;
+  
   }else {
-    Serial.println("ERROR: virtual endstop hit - slide aborted");
+    Serial.println("ERROR: slide has not been started");
     return false;
   }
 }
 
 
-void Slider::stopSlide () {
+void Slider::stopSequence () {
   stepperInstance->stop();
 }
 
@@ -160,8 +226,9 @@ void Slider::camTrigger () {
 
 void Slider::manualRight() {
   
-  if ( carriagePosition+1 < maxPosition && carriagePosition >= 0 ) {
+  if ( carriagePosition+1 <= maxPosition ) {
     carriagePosition++;
+    Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
     #ifdef INVERT_STEPPER_DIR
       digitalWrite(stepperDir, 0);
     #else
@@ -170,13 +237,14 @@ void Slider::manualRight() {
     digitalWrite(stepperStep, HIGH);
     digitalWrite(stepperStep, LOW);
   }else {
-    Serial.println("ERROR: manualRight: virtual endstop hit - slide aborted");
+    Serial.println("ERROR: manualRight: virtual endstop hit");
   }
 }
 
 void Slider::manualLeft() {
-  if ( carriagePosition <= maxPosition && carriagePosition-1 > 0 ) {
+  if ( carriagePosition-1 >= 0 ) {
     carriagePosition--;
+    Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
     #ifdef INVERT_STEPPER_DIR
       digitalWrite(stepperDir, 1);
     #else
@@ -185,7 +253,7 @@ void Slider::manualLeft() {
     digitalWrite(stepperStep, HIGH);
     digitalWrite(stepperStep, LOW);
   }else {
-    Serial.println("ERROR: manualLeft: virtual endstop hit - slide aborted");
+    Serial.println("ERROR: manualLeft: virtual endstop hit");
   }
 }
 

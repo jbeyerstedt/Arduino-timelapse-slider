@@ -98,7 +98,7 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
-        Serial.print("initialDir: "); Serial.println(buttonsHelper);
+        Serial.print("initial position: "); Serial.println(buttonsHelper);
         
         currentState = 2;
         Serial.println("--switch to state 2");
@@ -340,19 +340,19 @@ void loop() {
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
-            mySlider.startSlide();
+            mySlider.startSequence();
             currentState = 17;
             Serial.println("--switch to state 17");
             break;
           case 2: // SL
             buttons.reset();
-            mySlider.startSlide();
+            mySlider.startSequence();
             currentState = 28;
             Serial.println("--switch to state 28");
             break;
           case 3: // CO
             buttons.reset();
-            mySlider.startSlide();
+            mySlider.startSequence();
             currentState = 37;
             Serial.println("--switch to state 37");
             break;
@@ -381,24 +381,27 @@ void loop() {
       if (buttonEnter.triggered() || (slideError) ) {
         switch (currentMode) {
           case 1: // IN
-            buttons.reset();
-            mySlider.stopSlide();
+            mySlider.stopSequence();
             
+            buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 12;
             Serial.println("--switch to state 12");
             break;
           case 2: // SL
-            buttons.reset();
-            mySlider.stopSlide();
+            mySlider.stopSequence();
             
+            buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 22;
             Serial.println("--switch to state 22");
             break;
           case 3: // CO
-            buttons.reset();
-            mySlider.stopSlide();
+            mySlider.stopSequence();
             
-            currentState = 32;
+            buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
+            currentState = 22;
             Serial.println("--switch to state 32");
             break;
           default:
