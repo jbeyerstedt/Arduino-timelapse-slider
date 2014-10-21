@@ -6,7 +6,7 @@
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
- * version 2.0.0 beta1 (19.10.2014)
+ * version 2.0.1 (22.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -304,8 +304,7 @@ void loop() {
       
       switch (currentMode) {
         case 1: // IN
-          // TODO: functionality in Slider::setParameters special for IN-mode
-          //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
+          mySlider.setParameters(currentMode, 0, triggerInterval, 0);
           
           buttons.reset();
           currentState = 16;
@@ -320,7 +319,7 @@ void loop() {
           break;
         case 3: // CO
           // TODO: functionality in Slider::setParameters special for CO-mode
-          //mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
+          //mySlider.setParameters(currentMode, slideTime, 0, slideDirection);
           
           buttons.reset();
           currentState = 36;
@@ -377,6 +376,8 @@ void loop() {
       }else {
         // virtual endstop hit
         slideError = true;
+        displaySymbol(errorGen);
+        delay(1000);
       }
       
       

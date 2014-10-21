@@ -7,7 +7,7 @@
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
  * buttons library:
- * version 2.0.0 (19.10.2014)
+ * version 2.0.1 (22.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */

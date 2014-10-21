@@ -4,7 +4,7 @@
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
  * display library:
- * version 2.0.0 (19.10.2014)
+ * version 2.0.1 (22.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -50,7 +50,8 @@ typedef enum {
   waitGo,     // wait for GO
   slideMve,   // slide moving carriage
   slideTrg,   // slide triggering camera
-  slideInt    // slide waiting for next triggering (only IN mode)
+  slideInt,   // slide waiting for next triggering (only IN mode)
+  errorGen    // symbol for any (general) error
 }mySymbols;
 
 

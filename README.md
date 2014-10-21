@@ -110,9 +110,11 @@ more follows soon / mehr folgt bald
 * set initial carriage position
 * remember last settings (start at last entered number for slideTime, etc.)
 * better virtual endstop methods
+* some extensive serial prints can be disabled
+* functionality for pure interval triggering added 
 
 #### planned for version 2.1
-* functionality for movie and timelapse mode
+* functionality for movie mode
 
 
 
@@ -137,8 +139,12 @@ more follows soon / mehr folgt bald
 		* number function can do negative numbers up to -9
 	* enter start position (for virtual endstops)
 	* move carriage with plus and minus buttons (for position counting)
+* 2.0.1:
+	* remember last settings (start at last entered number for slideTime, etc.)
+	* better virtual endstop methods
+	* some extensive serial prints can be disabled
+	* functionality for pure interval triggering added
+	* several bugfixes
 	
 * TODO:
-	* !! functionality for movie and timelapse mode
-	* add some error symbol if wrong parameters set and reset to start
-	* enable some serial prints only if #DEBUG is set
+	* !! functionality for movie mode

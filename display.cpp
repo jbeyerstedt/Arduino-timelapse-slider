@@ -4,7 +4,7 @@
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
  * display library:
- * version 2.0.0 (19.10.2014)
+ * version 2.0.1 (22.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -38,7 +38,9 @@ const int WAIT_GO   = ((d1[0]|d1[2]|d1[3]|d1[4]|d1[5]|d1[6])<<8) | (d2[2]|d2[3]|
 
 const int SLIDE_MVE = ((d1[4]|d1[6])<<8) | ( d2[2]|d2[6] ); // e+g | c+g
 const int SLIDE_TRG = ((d1[0]|d1[3]|d1[4]|d1[5])<<8) | ( d2[0]|d2[1]|d2[2]|d2[3] ); // a+d+e+f | a+b+c+d
-const int SLIDE_INT = ((d1[6])<<8) | (d2[6]);; // g | g
+const int SLIDE_INT = ((d1[6])<<8) | (d2[6]); // g | g
+
+const int ERROR_GEN = ((d1[4]|d1[6])<<8) | (d2[1]|d2[6]); // e+g | b+g
 
 const int ERROR_NUM = (D1_DP<<8)|(d2[0]|d2[3]); // DP | a+d
 
@@ -154,6 +156,9 @@ void displaySymbol (mySymbols displaySym) {
       break;
     case slideInt:
       shift2digits(SLIDE_INT);
+      break;
+    case errorGen:
+      shift2digits(ERROR_GEN);
       break;
     default:
       Serial.println("ERROR: invalid symbol requested");

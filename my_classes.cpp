@@ -3,7 +3,7 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.0 beta1 (19.10.2014)
+ * version 2.0.1 (22.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -16,7 +16,7 @@ Slider::Slider (SlowImpulses *stepper) {
   stepperInstance = stepper;
   
   maxPosition = maxSteps;
-  slideRunning = false;
+  sequenceRunning = false;
   slideDir = 1;
 }
 
@@ -37,8 +37,12 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
   
   switch (mode) {
     case 1:  // TL-mode
-      // TODO: write a function with millis() to do camTrigger() each interval.
+      // create new IntervalTrigger instance
+      intTrigger = new IntervalTrigger();
       
+      intervalDuration = triggerInterval;
+      
+      break;
     case 2:  // SL-mode
       // calculate speed (steps per interval)
       // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
@@ -85,8 +89,17 @@ void Slider::startSequence () {
   
   switch (mode) {
     case 1:  // TL-mode
-      // TODO: write a function with millis() to do camTrigger() each interval.
       
+      if ( intTrigger->set(intervalDuration*1000) ) {
+        sequenceRunning = true;
+        
+        intTrigger->start();
+        displaySymbol(slideInt);
+        
+      }else {
+        sequenceRunning = false;
+        // error
+      }
       break;
     
     case 2:  // SL-mode
@@ -110,7 +123,7 @@ void Slider::startSequence () {
         
         // check position: enough space for one sequence ?
         if ( (nextPosition >= 0) && (nextPosition <= maxPosition) ) {
-          slideRunning = true;
+          sequenceRunning = true;
           
           carriagePosition = nextPosition;
           stepperInstance->start();
@@ -119,13 +132,13 @@ void Slider::startSequence () {
           Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
           #endif
         }else {
-          slideRunning = false;
+          sequenceRunning = false;
           Serial.println("ERROR: virtual endstop hit - slide aborted");
         }
         
       }else {
         Serial.println("ERROR: slow_impulses::set - wrong frequency");
-        slideRunning = false;
+        sequenceRunning = false;
       }
       
       break;
@@ -142,14 +155,20 @@ void Slider::startSequence () {
 
 
 boolean Slider::update() {
-  if (slideRunning == true) {
+  if (sequenceRunning == true) {
   
     int nextPosition = 0;
     
     switch (mode) {
       case 1:  // TL-mode
-        // TODO: write a function with millis() to do camTrigger() each interval.
         
+        // check if one interval is over
+        if ( intTrigger->getStatus() ) {
+          // still running, do nothing
+        }else {
+          camTrigger();
+          displaySymbol(slideInt);
+        }
         break;
         
       case 2:  // SL-mode
@@ -171,7 +190,7 @@ boolean Slider::update() {
         if (stepperInstance->getStatus()) {
           // still running, do nothing
         }else {
-          stepperInstance->stop();
+          stepperInstance->stop(); // stop before restart
           
           camTrigger();
           
@@ -181,7 +200,7 @@ boolean Slider::update() {
             stepperInstance->start();
             displaySymbol(slideMve);
           }else {
-            slideRunning = false;
+            sequenceRunning = false;
             Serial.println("ERROR: virtual endstop hit - slide aborted");
           }
           #ifdef DEBUG_COM
@@ -208,7 +227,20 @@ boolean Slider::update() {
 
 
 void Slider::stopSequence () {
-  stepperInstance->stop();
+  switch (mode) {
+    case 1:  // TL-mode
+      intTrigger->stop();
+      break;
+    case 2:  // SL-mode
+      stepperInstance->stop();
+      break;
+    case 3:  // CO-mode
+      // TODO: add functinality
+      break;
+    default:
+      break;
+  }
+  
 }
 
 
@@ -264,3 +296,43 @@ void Slider::manualLeft() {
 
 
 
+
+IntervalTrigger::IntervalTrigger() {
+  started = false;
+  counter = 0;
+}
+
+boolean IntervalTrigger::set(int intervalDuration) {
+  if (intervalDuration > 0) {
+    interval = intervalDuration;
+    return true;
+  }else {
+    Serial.println("ERROR: IntervalTrigger::start - no interval duration set");
+    return false;
+  }
+}
+
+void IntervalTrigger::start() {
+  startTime = millis();
+  started = true;
+}
+
+boolean IntervalTrigger::getStatus () {
+  if (started == true) {
+    if ( ( millis()-startTime-(interval*counter) ) > interval ) {
+      // one interval is over
+      counter++;
+      return false;
+    }else {
+      return true;
+    }
+  }else {
+    return true; // because you will not interrupt
+    Serial.println("ERROR: IntervalTrigger::start - not started!");
+  }
+}
+
+void IntervalTrigger::stop() {
+  started = false;
+  counter = 0;
+}
