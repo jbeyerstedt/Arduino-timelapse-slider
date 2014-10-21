@@ -109,11 +109,10 @@ more follows soon / mehr folgt bald
 	* more responsive exit from slide
 * set initial carriage position
 * remember last settings (start at last entered number for slideTime, etc.)
+* better virtual endstop methods
 
 #### planned for version 2.1
 * functionality for movie and timelapse mode
-* better virtual endstop methods
-* 
 
 
 
@@ -140,8 +139,6 @@ more follows soon / mehr folgt bald
 	* move carriage with plus and minus buttons (for position counting)
 	
 * TODO:
-	* virtual endstops
-		* better method
 	* !! functionality for movie and timelapse mode
 	* add some error symbol if wrong parameters set and reset to start
 	* enable some serial prints only if #DEBUG is set

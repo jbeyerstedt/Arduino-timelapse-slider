@@ -95,13 +95,6 @@ void Slider::startSequence () {
       
       if ( stepperInstance->set(stepsPerSecond, intervalDuration) ) {
         
-        // workaround for bad position tracking
-//        if (carriagePosition < 0) {
-//          carriagePosition = 0;
-//        }else if (carriagePosition > maxPosition) {
-//          carriagePosition = maxPosition;
-//        }
-        
         // check position: calculate next position
         switch (slideDir) {
           case 0: // right +
@@ -122,7 +115,9 @@ void Slider::startSequence () {
           carriagePosition = nextPosition;
           stepperInstance->start();
           displaySymbol(slideMve);
+          #ifdef DEBUG_COM
           Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
+          #endif
         }else {
           slideRunning = false;
           Serial.println("ERROR: virtual endstop hit - slide aborted");
@@ -189,7 +184,9 @@ boolean Slider::update() {
             slideRunning = false;
             Serial.println("ERROR: virtual endstop hit - slide aborted");
           }
+          #ifdef DEBUG_COM
           Serial.print("---- current position: "); Serial.println(carriagePosition);
+          #endif
         }
         
         break;
@@ -228,7 +225,11 @@ void Slider::manualRight() {
   
   if ( carriagePosition+1 <= maxPosition ) {
     carriagePosition++;
+    
+    #ifdef DEBUG_COM
     Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
+    #endif
+    
     #ifdef INVERT_STEPPER_DIR
       digitalWrite(stepperDir, 0);
     #else
@@ -244,7 +245,11 @@ void Slider::manualRight() {
 void Slider::manualLeft() {
   if ( carriagePosition-1 >= 0 ) {
     carriagePosition--;
+    
+    #ifdef DEBUG_COM
     Serial.print("---- current position: "); Serial.println(carriagePosition); // debug
+    #endif
+    
     #ifdef INVERT_STEPPER_DIR
       digitalWrite(stepperDir, 1);
     #else

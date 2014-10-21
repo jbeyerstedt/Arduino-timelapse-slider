@@ -53,6 +53,8 @@ const int numberLimitTriggerTime = 10;  // maximum trigger interval time (in sec
 // define the number os milliseconds to retrigger a count-up if button is held down
 const int fastCountInterval = 150;
 
+#define DEBUG_COM                 // enable detailed info for debugging
+//#define NO_SERIAL_COM
 
 // debug config
 // --------------------

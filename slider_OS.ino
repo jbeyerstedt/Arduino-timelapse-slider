@@ -65,7 +65,9 @@ void setup() {
   
   stepper.init(stepperStep);
   
+  #ifndef NO_SERIAL_COM
   Serial.begin(9600);
+  #endif
 }
 
 
