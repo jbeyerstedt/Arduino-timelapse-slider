@@ -50,6 +50,10 @@ void ButtonPair::setInterval (int intervalStart, int intervalEnd, int manualFast
   retriggerOnHoldInt = manualFastInterval;
 }
 
+void ButtonPair::presetValue (int presetValue) {
+  value = presetValue;
+}
+
 void ButtonPair::update () {
   boolean plusStateChanged = plusButton->update();
   boolean minusStateChanged = minusButton->update();

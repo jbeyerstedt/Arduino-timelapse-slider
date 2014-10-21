@@ -81,11 +81,10 @@ void loop() {
     
     case 1:  // initialize carriage position
       
-      // TODO: change input method - display dir symbols only if button was hit !?
       buttons.setInterval(0,2);
       buttonsHelper = buttons.getValue();  
       switch (buttonsHelper) {
-        case 1: // left
+        case 0: // left
           displaySymbol(initLeft);
           mySlider.initCarriagePosition(0);
           break;
@@ -130,16 +129,19 @@ void loop() {
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 12;
             Serial.println("--switch to state 12");
             break;
           case 2: // SL
             buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 22;
             Serial.println("--switch to state 22");
             break;
           case 3: // CO
             buttons.reset();
+            buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 32;
             Serial.println("--switch to state 32");
             break;
@@ -157,7 +159,6 @@ void loop() {
     case 32:
       displaySymbol(waitIdle);
       
-      buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
       buttonsHelper = buttons.getValue();
       
       digitalWrite(stepperSleep, HIGH);
@@ -174,17 +175,20 @@ void loop() {
       if (buttonEnter.triggered() ) {
         switch (currentMode) {
           case 1: // IN
-            buttons.reset();
+            buttons.setInterval(1,numberLimitTriggerTime);
+            buttons.presetValue(triggerInterval); // preset last entered value
             currentState = 13;
             Serial.println("--switch to state 13");
             break;
           case 2: // SL
-            buttons.reset();
+            buttons.setInterval(1,numberLimitSlideTime);
+            buttons.presetValue(slideTime); // preset last entered value
             currentState = 23;
             Serial.println("--switch to state 23");
             break;
           case 3: // CO
-            buttons.reset();
+            buttons.setInterval(1,numberLimitSlideTime);
+            buttons.presetValue(slideTime); // preset last entered value
             currentState = 33;
             Serial.println("--switch to state 33");
             break;
@@ -199,7 +203,6 @@ void loop() {
     
     case 23:  // set total time
     case 33:
-      buttons.setInterval(1,numberLimitSlideTime);
       slideTime = buttons.getValue();
       displayNumber(slideTime);
       
@@ -207,12 +210,14 @@ void loop() {
         Serial.print("slideTime: "); Serial.println(slideTime);
         switch (currentMode) {
           case 2: // SL
-            buttons.reset();
+            buttons.setInterval(0,1);
+            buttons.presetValue(slideDirection); // preset last entered value
             currentState = 24;
             Serial.println("--switch to state 24");
             break;
           case 3: // CO
-            buttons.reset();
+            buttons.setInterval(0,1);
+            buttons.presetValue(slideDirection); // preset last entered value
             currentState = 34;
             Serial.println("--switch to state 34");
             break;
@@ -225,10 +230,8 @@ void loop() {
       }
       break;
     
-    case 14:  // set carriage movement direction
-    case 24:
+    case 24:  // set carriage movement direction
     case 34:
-      buttons.setInterval(0,1);
       slideDirection = buttons.getValue();  
       if (slideDirection == 1) { // right
         displaySymbol(dirRigt);
@@ -245,7 +248,8 @@ void loop() {
             Serial.println("--switch to state 15");
             break;
           case 2: // SL
-            buttons.reset();
+            buttons.setInterval(1,numberLimitTriggerTime);
+            buttons.presetValue(triggerInterval); // preset last entered value
             currentState = 25;
             Serial.println("--switch to state 25");
             break;
@@ -265,7 +269,6 @@ void loop() {
     
     case 13:  // set trigger interval
     case 25:
-      buttons.setInterval(1,numberLimitTriggerTime);
       triggerInterval = buttons.getValue();
       displayNumber(triggerInterval);
       
@@ -274,7 +277,7 @@ void loop() {
         switch (currentMode) {
           case 1: // IN
             buttons.reset();
-            currentState = 14;
+            currentState = 15;
             Serial.println("--switch to state 14");
             break;
           case 2: // SL
@@ -413,6 +416,7 @@ void loop() {
       // or something wrong happened
       Serial.println("--reset (default case)");
       currentState = 1;
+      buttons.presetValue (1); // init position: display "initPos" first.
       
       break;
   } // end switch

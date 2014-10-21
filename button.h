@@ -47,6 +47,7 @@ class ButtonPair {
     ButtonPair(int PlusPin, int MinusPin);  
     void setInterval (int intervalStart, int intervalEnd);
     void setInterval (int intervalStart, int intervalEnd, int manualFastInterval); // override fastCountInterval of config.h
+    void presetValue (int presetValue);
     int getValue ();
     void update ();
     void reset();

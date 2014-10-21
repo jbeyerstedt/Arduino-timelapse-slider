@@ -108,11 +108,12 @@ more follows soon / mehr folgt bald
 	* faster stepping possible
 	* more responsive exit from slide
 * set initial carriage position
+* remember last settings (start at last entered number for slideTime, etc.)
 
 #### planned for version 2.1
 * functionality for movie and timelapse mode
 * better virtual endstop methods
-* remember last settings (start at last entered number for slideTime, etc.)
+* 
 
 
 
