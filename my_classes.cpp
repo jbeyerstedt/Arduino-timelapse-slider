@@ -3,7 +3,7 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.1 (22.10.2014)
+ * version 2.0.2 (24.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -319,7 +319,7 @@ void IntervalTrigger::start() {
 
 boolean IntervalTrigger::getStatus () {
   if (started == true) {
-    if ( ( millis()-startTime-(interval*counter) ) > interval ) {
+    if ( ( millis()-startTime-(long(interval)*counter) ) > interval ) {
       // one interval is over
       counter++;
       return false;
