@@ -5,7 +5,7 @@
  *
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
- * v1.0.1 (22.10.2014)
+ * v1.0.2 (24.10.2014)
  */
 
 
@@ -66,7 +66,8 @@ boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
   }
   
   // max number of interrupts = desired duration[s] * desired frequency * FUNCT_PERIOD
-  durationCompare = (duration/1000) * frequency * FUNCT_PERIOD;
+  durationCompare = long (duration) * frequency * FUNCT_PERIOD / 1000 - 1;
+  Serial.print("stepper.durationCompare: "); Serial.println(durationCompare); // debug
     
   durationStatus = false;    // false -> SlowImpulses interval not started
   
