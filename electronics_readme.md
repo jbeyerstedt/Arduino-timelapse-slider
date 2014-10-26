@@ -4,18 +4,12 @@ by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany
 **electronics documentation**  
 
 
-
-#### about this / über dieses Dokument  
-**english:** 
+#### about this  
 This document describes the electronics part of the Arduino timelapse slider, but it will not be a complete instuction to rebuild everything I made. It´s more like all the parts you´ll need to build it, but there is enough you must do by yourself. I can´t explain every wire I used.  
 Kepp in mind, that your camera may be triggered in a different way. Canon DSLRs are easy. You only must connect two pins of the remote connector. Some cameras are using different resistors to detect focus and trigger. Please ask google to find out more about your camera.
 
-**deutsch:** 
-deutscher Text folgt noch.
 
-
-## parts I used / verwendete Teile:
-**english:**  
+## parts I used:
 
 amount | description  
 --	| ---  
@@ -39,13 +33,7 @@ amount | description
 *	stepper motor [http://www.exp-tech.de/Servos-und-Motoren/Stepper-Motor-Bipolar-200-Steps-Rev-35x36mm-2-7V-1000mA.html]()
 
 
-**deutsch:** 
-
-* deutscher Text folgt noch.
-
-
-
-## installation notes / Aufbauanweisungen:
+## installation notes :
 ##### english:
 ###### display
 
@@ -59,8 +47,3 @@ amount | description
 *	connect the stepper motor driver your arduino, an power supply and your stepper motor. Do never switch the driver on without an stepper motor (see manual of the driver).
 *	read the manual and try the driver with a code snippet. If that works, you can put that code in your project.
 *	If you use my code copy and paste, than you have to check whether everything is connected to the same pin I used. Otherwise you must change the constants at the beginning of the code.
-
-
-**deutsch:** 
-
-* deutscher Text folgt noch.

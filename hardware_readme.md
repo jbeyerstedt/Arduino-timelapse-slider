@@ -4,35 +4,19 @@ by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany
 **hardware documentation**  
 
 
-
-#### about this / über dieses Dokument  
-**english:** 
+#### about this 
 This is the documentation for the technical drawings and all the hardware.
 all the technical drawings are specific to the parts I used. If you use other parts, some measurements must be changed.  
 
-**deutsch:** 
-Dies ist die Dokumentation für die technischen Zeichnungen, sowie die Hardware an sich.
-Bitte beachte, dass die Abmesungen spezifisch für die von mir verwendeten Teile sind. Beim Verwenden anderer Bauteile müssen einige Abstände somit geändert werden.
 
-
-
-## basic Measurements / Grundabmessungen:
-**english:**  
+## basic Measurements
 
 * distance between the tubes (inner edges): 45 mm
 * tubes diameter: 12 mm
 * bearings: 10mm x 4 mm
 
-**deutsch:** 
 
-* Abstand der Rohre (innen): 45 mm
-* Durchmesser Rohre: 12 mm
-* Kugellager: 10mm x 4 mm
-
-
-
-## parts I used / verwendete Teile:
-**english:**  
+## parts I used
 
 amount | description  
 --	| ---  
@@ -62,13 +46,7 @@ amount | description
 *	stepper motor [http://www.exp-tech.de/Servos-und-Motoren/Stepper-Motor-Bipolar-200-Steps-Rev-35x36mm-2-7V-1000mA.html]()
 
 
-**deutsch:**  
-
-* 	deutscher Text folgt noch.
-
-
-
-## installation notes / Aufbauanweisungen:
+## installation notes:
 ##### english:
 ###### tubes, tube support and stepper motor
 *	build one tube support, that holds the two tubes and a gear for the belt
@@ -87,17 +65,3 @@ amount | description
 *	hold the belt on the slider to get the correct legth and mark the position for the screw. Kepp in mind, that the two belts will have different lenghts.
 *	drill the other two holes
 *	screw the belt to your slider
-
-
-##### deutsch:
-###### Rohre, Endstücke und Schrittmotoren
-*	Übersetzung folgt
-
-###### innerer Schlitten
-*	Übersetzung folgt
-
-###### äußerer Schlitten
-*	Übersetzung folgt
-
-###### Zahnriemen
-*	Übersetzung folgt

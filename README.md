@@ -4,37 +4,22 @@ by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany
 **software documentation**  
 
 
-## HEY - I´m writing a completely new version! It´ll be uploaded soon!
-After studying and getting the state machine known, I decided to completely rewrite the code of the timelapse-slider, because this is a state machine, so it should be programmed as state machine.  
-I also will separate the software in smaller modules.  
-See the results soon!
-
-
-#### about this / über dieses Dokument  
-**english:** 
+#### about this document  
 This readme contains the introduction of the project, changelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
 
-**deutsch:** 
-Dieses readme enthält eine Einführung zum Projekt, das changelog und das **Benutzerhandbuch** für den Code/ die Software. Schau also auch das "hardware_readme.md" und das "electronics_readme.md" für die vollständige Dokumentation an.
 
-
-## introductions / Einleitung
-**english:** 
+## introduction
 I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the Arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
-You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "website").
+You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my homepage").
 
-**deutsch:** 
-Ich habe vor kurzer Zeit angefangen Zeitrafferaufnahmen mit meiner DSLR zu machen und wollte jetzt einen Kamera-Slider haben, da mit diesem noch spannendere Bewegungen möglich sind.
-Also habe ich mich für Arduino als Plattform für mein Projekt entschieden und angefangen zu programmieren und an der Elektronik zu basteln.
-Das Board und die Software sollten als erstes einen Schrittmotor und den Fernauslöser der Kamera ansteuern. Für die Eingaben habe ich mich für zwei 7-Segment-Anzeigen und drei Taster entschieden.
 
-Fotos, die ich gemacht habe, sowie (hoffentlich) bald auch Videos findet Ihr auch auf meiner Website [jtByt-Pictures.de](http://jtByt-Pictures.de "website").
+## user manual  
+#### general information
+1. the total slide time influences the sliding speed!
 
-## user manual / Benutzerhandbuch  
-**english:** 
-
+#### step by step guide
 1. switch on power
 2. The software initializes
 	1. give it the starting point (left or right)
@@ -69,21 +54,17 @@ Symbols:
 - dr -> set total time (drive)
 - In -> set trigger interval
 - ┌ ┐ -> moving carriage
-- [ ] -> triggering camera
+- \[ \] -> triggering camera
 - – –  -> waiting for next triggering (interval trigger mode only)
 - . -> idle/ manual drive possible
+ 
 
-   
-**deutsch:**  
-
-follows soon / folgt bald 
-
-## setup manual / Einrichtungshandbuch
+## setup manual
 This will explain the options that can be set in the config.h file. But it´s quite well commented in the file itself as well.  
 more follows soon / mehr folgt bald  
 
 
-## what should the software do? / Was soll die Software können?
+## what should the software do?
 #### in general
 * input values: time to slide the whole slider, slide direction, trigger interval
 * have a stop button to escape the slide
@@ -113,7 +94,7 @@ more follows soon / mehr folgt bald
 * some extensive serial prints can be disabled
 * functionality for pure interval triggering added 
 
-#### planned for version 2.1
+#### additional in version 2.1
 * functionality for movie mode
 
 
@@ -145,6 +126,8 @@ more follows soon / mehr folgt bald
 	* some extensive serial prints can be disabled
 	* functionality for pure interval triggering added
 	* several bugfixes
+* 2.1.0:
+	* movie mode added
 	
 * TODO:
-	* !! functionality for movie mode
+	* add a state machine documentation
