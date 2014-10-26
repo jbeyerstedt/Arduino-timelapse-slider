@@ -3,7 +3,7 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.2 (24.10.2014)
+ * version 2.1.0 (26.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -63,10 +63,23 @@ void Slider::setParameters (int operationMode, int travelTime, int triggerInterv
       // maxSteps / travelTime [min] * 60 [sek/min] = stepsPerSecond
       stepsPerSecond = maxSteps / travelTime / 60;
       
-      intervalDuration = 0;
+      if (stepsPerSecond > maxVelocity) {
+        stepsPerSecond = maxVelocity;
+      }
       
-      stepsPerInterval = 0; // TODO: another solution for keeping track of the carriage position
-      
+      // set intervalDuration to max time until endstop will be hit
+      switch (slideDir) {
+        case 0: // right +
+          intervalDuration = float(maxSteps-carriagePosition) / stepsPerSecond * 1000;
+          break;
+        case 1: // left -
+          intervalDuration = float(carriagePosition) / stepsPerSecond * 1000;
+          break;
+        default:
+          Serial.println("ERROR: Slider::set (mode3) - wrong slideDir");
+          break;
+      }
+            
       break;
     default:
       Serial.println("ERROR: Slider::setParameters - wrong mode");
@@ -144,6 +157,20 @@ void Slider::startSequence () {
       break;
     
     case 3:  // CO-mode
+      digitalWrite(stepperSleep, HIGH);
+      digitalWrite(stepperDir, slideDir);
+      
+      if ( stepperInstance->set(stepsPerSecond, intervalDuration) ) {
+        sequenceRunning = true;
+        
+        mode3StartTime = millis();
+        stepperInstance->start();
+        displaySymbol(slideMve);
+        mode3CarriageStartPos = carriagePosition;
+      }else {
+        Serial.println("ERROR: slow_impulses::set - wrong frequency");
+        sequenceRunning = false;
+      }
       
       break;
     
@@ -212,6 +239,36 @@ boolean Slider::update() {
         
       case 3:  // CO-mode
         
+        // calculate position by calculating the position change since start
+        switch (slideDir) {
+          case 0: // right +
+            nextPosition = mode3CarriageStartPos + ( (millis()-mode3StartTime)*stepsPerSecond/1000 );
+            break;
+          case 1: // left -
+            nextPosition = mode3CarriageStartPos - ( (millis()-mode3StartTime)*stepsPerSecond/1000 );
+            break;
+          default:
+            Serial.println("ERROR: Slider::update - wrong slideDir");
+            break;
+        }
+        
+        if ( (nextPosition >= 0) && (nextPosition <= maxSteps) ) {
+          // carriage still in range
+          carriagePosition = nextPosition;
+        }else {
+          if (nextPosition <= 0) {
+            carriagePosition = 0;
+          }else if (nextPosition >= maxSteps) {
+            carriagePosition = maxSteps;
+          }
+          sequenceRunning = false;
+          stepperInstance->stop();
+          Serial.println("ERROR: virtual endstop hit - slide aborted");
+        }
+        #ifdef DEBUG_COM
+        Serial.print("---- current position: "); Serial.println(carriagePosition);
+        #endif
+        
         break;
         
       default:
@@ -235,7 +292,7 @@ void Slider::stopSequence () {
       stepperInstance->stop();
       break;
     case 3:  // CO-mode
-      // TODO: add functinality
+      stepperInstance->stop();
       break;
     default:
       break;

@@ -3,14 +3,15 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.2 (24.10.2014)
+ * version 2.1.0 (26.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
 
 /*
   library for all other classes and functions
-  - Slider
+  - Slider - all things that move the carriage + pure interval trigger (using another class)
+  - IntervalTrigger - an interval trigger
 */
 
 
@@ -52,6 +53,8 @@ class Slider {
   unsigned int stepsPerSecond;    // frequency for output
   unsigned long intervalDuration; // duration for output
   unsigned int stepsPerInterval;  // helping variable for carriagePosition
+  unsigned long mode3StartTime;   // helper for mode 3 current position calculation
+  int mode3CarriageStartPos;      // helper for mode 3 current position calcualtion
 
   boolean sequenceRunning;        // helper for error and misuse management
   
