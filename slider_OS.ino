@@ -6,7 +6,7 @@
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
- * version 2.0.1 (22.10.2014)
+ * version 2.1.0 (26.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -296,7 +296,7 @@ void loop() {
       }
       break;
     
-    case 15:  // prespare data / set slide parameters
+    case 15:  // prepare data / set slide parameters
     case 26:
     case 35:
       Serial.println("--data preparation");
@@ -318,8 +318,7 @@ void loop() {
           Serial.println("--switch to state 27");
           break;
         case 3: // CO
-          // TODO: functionality in Slider::setParameters special for CO-mode
-          //mySlider.setParameters(currentMode, slideTime, 0, slideDirection);
+          mySlider.setParameters(currentMode, slideTime, 0, slideDirection);
           
           buttons.reset();
           currentState = 36;

@@ -3,7 +3,7 @@
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
- * version 2.0.1 (22.10.2014)
+ * version 2.1.0 (26.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -38,7 +38,7 @@
 
 // set mechanical properties
 const int triggerDuration = 500;   // how long should your camera be triggered (exposure time is still set in camera)
-const int maxSteps        = 4400;  // amount of steps to slide the slider along {my calue for half step: 2200}
+const int maxSteps        = 2220;  // amount of steps to slide the slider along {my calue for half step: 2200}
 const int maxVelocity     = 50;    // maximum number of steps per second you stepper motor can perform
 #define INVERT_STEPPER_DIR         // invert stepper direction, that it matches your buttons (right button, slide right)
 
