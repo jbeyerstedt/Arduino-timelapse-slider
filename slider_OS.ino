@@ -22,7 +22,7 @@
 
 
 int currentState = -1; 
-int currentMode  = 0; // 1: IN - 2: SL - 3: CO
+int opMode  = 0;       // operation mode - 1: IN - 2: SL - 3: CO
 
 int choosenNumber = 0;
 boolean slideError = false;
@@ -110,8 +110,8 @@ void loop() {
     
     case 2:  // initialization / set mode
       buttons.setInterval(0,3);
-      currentMode = buttons.getValue();
-      switch (currentMode) {
+      opMode = buttons.getValue();
+      switch (opMode) {
         case 1: // IN
           displaySymbol(modeIn);
           break;
@@ -127,8 +127,8 @@ void loop() {
       }
       
       if (buttonEnter.triggered() ) {
-        Serial.print("mode: "); Serial.println(currentMode);
-        switch (currentMode) {
+        Serial.print("mode: "); Serial.println(opMode);
+        switch (opMode) {
           case 1: // IN
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
@@ -175,7 +175,7 @@ void loop() {
       
       
       if (buttonEnter.triggered() ) {
-        switch (currentMode) {
+        switch (opMode) {
           case 1: // IN
             buttons.setInterval(1,numberLimitTriggerTime);
             buttons.presetValue(triggerInterval); // preset last entered value
@@ -210,7 +210,7 @@ void loop() {
       
       if (buttonEnter.triggered() ) {
         Serial.print("slideTime: "); Serial.println(slideTime);
-        switch (currentMode) {
+        switch (opMode) {
           case 2: // SL
             buttons.setInterval(0,1);
             buttons.presetValue(slideDirection); // preset last entered value
@@ -243,7 +243,7 @@ void loop() {
       
       if (buttonEnter.triggered() ) {
         Serial.print("slideDirection: "); Serial.println(slideDirection);
-        switch (currentMode) {
+        switch (opMode) {
           case 1: // IN
             buttons.reset();
             currentState = 15;
@@ -276,10 +276,10 @@ void loop() {
       
       if (buttonEnter.triggered() ) {
         Serial.print("triggerInterval: "); Serial.println(triggerInterval);
-        switch (currentMode) {
+        switch (opMode) {
           case 1: // IN
             buttons.reset();
-            currentState = 15;
+            currentState = 14;
             Serial.println("--switch to state 14");
             break;
           case 2: // SL
@@ -296,29 +296,29 @@ void loop() {
       }
       break;
     
-    case 15:  // prepare data / set slide parameters
+    case 14:  // prepare data / set slide parameters
     case 26:
     case 35:
       Serial.println("--data preparation");
       displaySymbol(waitGo);
       
-      switch (currentMode) {
+      switch (opMode) {
         case 1: // IN
-          mySlider.setParameters(currentMode, 0, triggerInterval, 0);
+          mySlider.setParameters(opMode, 0, triggerInterval, 0);
           
           buttons.reset();
-          currentState = 16;
-          Serial.println("--switch to state 16");
+          currentState = 15;
+          Serial.println("--switch to state 15");
           break;
         case 2: // SL
-          mySlider.setParameters(currentMode, slideTime, triggerInterval, slideDirection);
+          mySlider.setParameters(opMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
           currentState = 27;
           Serial.println("--switch to state 27");
           break;
         case 3: // CO
-          mySlider.setParameters(currentMode, slideTime, 0, slideDirection);
+          mySlider.setParameters(opMode, slideTime, 0, slideDirection);
           
           buttons.reset();
           currentState = 36;
@@ -332,17 +332,17 @@ void loop() {
       }
       break;
     
-    case 16:  // wait for go
+    case 15:  // wait for go
     case 27:
     case 36:
       
       if (buttonEnter.triggered() ) {
-        switch (currentMode) {
+        switch (opMode) {
           case 1: // IN
             buttons.reset();
             mySlider.startSequence();
-            currentState = 17;
-            Serial.println("--switch to state 17");
+            currentState = 16;
+            Serial.println("--switch to state 16");
             break;
           case 2: // SL
             buttons.reset();
@@ -365,7 +365,7 @@ void loop() {
       }
       break;
     
-    case 17:  // supervise slide operation
+    case 16:  // supervise slide operation
     case 28:
     case 37:
                   
@@ -381,7 +381,7 @@ void loop() {
       
       
       if (buttonEnter.triggered() || (slideError) ) {
-        switch (currentMode) {
+        switch (opMode) {
           case 1: // IN
             mySlider.stopSequence();
             
