@@ -6,7 +6,7 @@
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
- * version 2.1.1 (08.11.2014)
+ * version 2.1.0 (26.10.2014)
  * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
  * CC BY-NC-SA 3.0
  */
@@ -103,9 +103,7 @@ void loop() {
         Serial.print("initial position: "); Serial.println(buttonsHelper);
         
         currentState = 2;
-        #ifdef INFO_COM
         Serial.println("--switch to state 2");
-        #endif
       }
       
       break;
@@ -135,25 +133,19 @@ void loop() {
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 12;
-            #ifdef INFO_COM
             Serial.println("--switch to state 12");
-            #endif
             break;
           case 2: // SL
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 22;
-            #ifdef INFO_COM
             Serial.println("--switch to state 22");
-            #endif
             break;
           case 3: // CO
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 32;
-            #ifdef INFO_COM
             Serial.println("--switch to state 32");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -187,32 +179,20 @@ void loop() {
           case 1: // IN
             buttons.setInterval(1,numberLimitTriggerTime);
             buttons.presetValue(triggerInterval); // preset last entered value
-            
-            displaySymbol(setInt); delay(500);
             currentState = 13;
-            #ifdef INFO_COM
             Serial.println("--switch to state 13");
-            #endif
             break;
           case 2: // SL
             buttons.setInterval(1,numberLimitSlideTime);
             buttons.presetValue(slideTime); // preset last entered value
-            
-            displaySymbol(setTime); delay(500);
             currentState = 23;
-            #ifdef INFO_COM
             Serial.println("--switch to state 23");
-            #endif
             break;
           case 3: // CO
             buttons.setInterval(1,numberLimitSlideTime);
             buttons.presetValue(slideTime); // preset last entered value
-            
-            displaySymbol(setTime); delay(500);
             currentState = 33;
-            #ifdef INFO_COM
             Serial.println("--switch to state 33");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -235,17 +215,13 @@ void loop() {
             buttons.setInterval(0,1);
             buttons.presetValue(slideDirection); // preset last entered value
             currentState = 24;
-            #ifdef INFO_COM
             Serial.println("--switch to state 24");
-            #endif
             break;
           case 3: // CO
             buttons.setInterval(0,1);
             buttons.presetValue(slideDirection); // preset last entered value
             currentState = 34;
-            #ifdef INFO_COM
             Serial.println("--switch to state 34");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -271,26 +247,18 @@ void loop() {
           case 1: // IN
             buttons.reset();
             currentState = 15;
-            #ifdef INFO_COM
             Serial.println("--switch to state 15");
-            #endif
             break;
           case 2: // SL
             buttons.setInterval(1,numberLimitTriggerTime);
             buttons.presetValue(triggerInterval); // preset last entered value
-            
-            displaySymbol(setInt); delay(500);
             currentState = 25;
-            #ifdef INFO_COM
             Serial.println("--switch to state 25");
-            #endif
             break;
           case 3: // CO
             buttons.reset();
             currentState = 35;
-            #ifdef INFO_COM
             Serial.println("--switch to state 35");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -312,16 +280,12 @@ void loop() {
           case 1: // IN
             buttons.reset();
             currentState = 14;
-            #ifdef INFO_COM
             Serial.println("--switch to state 14");
-            #endif
             break;
           case 2: // SL
             buttons.reset();
             currentState = 26;
-            #ifdef INFO_COM
             Serial.println("--switch to state 26");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -335,9 +299,7 @@ void loop() {
     case 14:  // prepare data / set slide parameters
     case 26:
     case 35:
-      #ifdef INFO_COM
       Serial.println("--data preparation");
-      #endif
       displaySymbol(waitGo);
       
       switch (opMode) {
@@ -346,27 +308,21 @@ void loop() {
           
           buttons.reset();
           currentState = 15;
-          #ifdef INFO_COM
           Serial.println("--switch to state 15");
-          #endif
           break;
         case 2: // SL
           mySlider.setParameters(opMode, slideTime, triggerInterval, slideDirection);
           
           buttons.reset();
           currentState = 27;
-          #ifdef INFO_COM
           Serial.println("--switch to state 27");
-          #endif
           break;
         case 3: // CO
           mySlider.setParameters(opMode, slideTime, 0, slideDirection);
           
           buttons.reset();
           currentState = 36;
-          #ifdef INFO_COM
           Serial.println("--switch to state 36");
-          #endif
           break;
         default:
           displaySymbol(waitInput);
@@ -386,25 +342,19 @@ void loop() {
             buttons.reset();
             mySlider.startSequence();
             currentState = 16;
-            #ifdef INFO_COM
             Serial.println("--switch to state 16");
-            #endif
             break;
           case 2: // SL
             buttons.reset();
             mySlider.startSequence();
             currentState = 28;
-            #ifdef INFO_COM
             Serial.println("--switch to state 28");
-            #endif
             break;
           case 3: // CO
             buttons.reset();
             mySlider.startSequence();
             currentState = 37;
-            #ifdef INFO_COM
             Serial.println("--switch to state 37");
-            #endif
             break;
           default:
             displaySymbol(waitInput);
@@ -438,9 +388,7 @@ void loop() {
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 12;
-            #ifdef INFO_COM
             Serial.println("--switch to state 12");
-            #endif
             break;
           case 2: // SL
             mySlider.stopSequence();
@@ -448,9 +396,7 @@ void loop() {
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 22;
-            #ifdef INFO_COM
             Serial.println("--switch to state 22");
-            #endif
             break;
           case 3: // CO
             mySlider.stopSequence();
@@ -458,9 +404,7 @@ void loop() {
             buttons.reset();
             buttons.setInterval(-maxSteps ,maxSteps, (1000/maxVelocity) ); // step interval = 1/maxVelocity in ms
             currentState = 22;
-            #ifdef INFO_COM
             Serial.println("--switch to state 32");
-            #endif
             break;
           default:
             displaySymbol(waitInput);

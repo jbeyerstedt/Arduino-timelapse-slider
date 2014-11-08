@@ -67,6 +67,7 @@ boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {
   
   // max number of interrupts = desired duration[s] * desired frequency * FUNCT_PERIOD
   durationCompare = long (duration) * frequency * FUNCT_PERIOD / 1000 - 1;
+  Serial.print("stepper.durationCompare: "); Serial.println(durationCompare); // debug
     
   durationStatus = false;    // false -> SlowImpulses interval not started
   
