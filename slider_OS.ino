@@ -1,14 +1,16 @@
 /*
- * slider OS 2
+ * project: slider OS 2
  * for controlling a timelapse slider and triggering the Camera
  * with an arduino, 3 buttons, 2 7-segment-displays, stepper driver
  *
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
+ * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
+ * license: http://www.gnu.org/licenses/gpl-3.0.txt GPLv3 License
+ *
  * version 2.1.1 (08.11.2014)
- * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
- * CC BY-NC-SA 3.0
+ * changelog: see readme.md
  */
 
 

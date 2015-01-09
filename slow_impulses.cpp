@@ -3,8 +3,9 @@
  * generates low frequency rectangular signals over a given time
  * for driving stepper motor drivers like Pololu A4988
  *
- * Jannik Beyerstedt, Hamburg, Germany | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
- * CC BY-NC-SA 3.0
+ * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
+ * license: http://www.gnu.org/licenses/gpl-3.0.txt GPLv3 License
+ *
  * v1.0.2 (24.10.2014)
  */
 
