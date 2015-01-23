@@ -1,6 +1,6 @@
 # Arduino-timelapse-slider
 by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
-[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [Github](https://github.com/jtByt-Pictures)  
+[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [Github](https://github.com/jbeyerstedt)  
 **software documentation**  
 
 
