@@ -6,7 +6,7 @@
  * for debouncing the buttons the Bounce2 library is used. Download it here:
  * https://github.com/thomasfredericks/Bounce-Arduino-Wiring
  * 
- * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
+ * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | code@jannikbeyerstedt.de
  * license: http://www.gnu.org/licenses/gpl-3.0.txt GPLv3 License
  *
  * version 2.1.1 (08.11.2014)

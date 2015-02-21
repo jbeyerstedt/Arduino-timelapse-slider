@@ -2,7 +2,7 @@
  * project: slider OS 2
  * my custom classes
  *
- * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | jtByt.Pictures@gmail.com
+ * copyright: Jannik Beyerstedt | http://jannikbeyerstedt.de | code@jannikbeyerstedt.de
  * license: http://www.gnu.org/licenses/gpl-3.0.txt GPLv3 License
  *
  * version 2.1.0 (26.10.2014)
