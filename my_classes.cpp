@@ -267,6 +267,8 @@ boolean Slider::update() {
         }
         #ifdef DEBUG_COM
         Serial.print("---- current position: "); Serial.println(carriagePosition);
+        #else
+        delay(1); //workaroud for weird behaviour
         #endif
         
         break;

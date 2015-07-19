@@ -24,14 +24,14 @@ class SlowImpulses {
   boolean no_error;
   
   public: boolean durationStatus;        // false if duration is over, true if not
-  public: unsigned int durationCount;    // counts the number of interrupts
+  public: unsigned long durationCount;    // counts the number of interrupts
   public: long durationCompare;          // max number of interrupts (based on duration)
   public: int pinNo;
   
   public:
     SlowImpulses ();
     void init(int pin);  // use in setup loop
-    boolean set(unsigned int frequency, unsigned int duration); // returns false if frequency is not valid
+    boolean set(unsigned int frequency, unsigned long duration); // returns false if frequency is not valid
     void start();        // use set first, then start. Starts a new duration cycle
     void stop();         // disables interrupt, does not reset frequency and duration
     boolean getStatus(); // returns true if duration is not due, false after duration over

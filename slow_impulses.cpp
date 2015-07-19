@@ -54,7 +54,7 @@ void SlowImpulses::init(int pin) {
 }
 
 
-boolean SlowImpulses::set(unsigned int frequency, unsigned int duration) {  
+boolean SlowImpulses::set(unsigned int frequency, unsigned long duration) {  
   TCNT1 = 0;               // reset counter register
   
   timerCompareVal = CPU_FREQU / PRESCALER / frequency / FUNCT_PERIOD;
