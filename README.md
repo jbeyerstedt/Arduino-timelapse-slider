@@ -4,8 +4,6 @@ by Jannik Beyerstedt from Hamburg, Germany
 **license:** GNU GPL v3
 
 ## Software Documentation
-
-#### about this document  
 This readme contains the introduction of the project, changelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
 
 
@@ -13,7 +11,7 @@ This readme contains the introduction of the project, changelog and the **user m
 I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the Arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
-You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my homepage").
+You can find photos I made and in the future also videos on my website [jannikbeyerstedt.de](https://jannikbeyerstedt.de/fotografie).
 
 
 ## User Manual  

@@ -1,10 +1,9 @@
-# Arduino-Timelapse-Slider
-by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
-[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [github](https://github.com/jtByt-Pictures)  
-**electronics documentation**  
+# Arduino - timelapse-slider
+by Jannik Beyerstedt from Hamburg, Germany  
+[jannikbeyerstedt.de](http://jannikbeyerstedt.de) | [Github](https://github.com/jbeyerstedt)  
+**license:** GNU GPL v3
 
-
-#### about this  
+## Electronics Documentation
 This document describes the electronics part of the Arduino timelapse slider, but it will not be a complete instuction to rebuild everything I made. It´s more like all the parts you´ll need to build it, but there is enough you must do by yourself. I can´t explain every wire I used.  
 Kepp in mind, that your camera may be triggered in a different way. Canon DSLRs are easy. You only must connect two pins of the remote connector. Some cameras are using different resistors to detect focus and trigger. Please ask google to find out more about your camera.
 

@@ -1,10 +1,10 @@
 # Arduino-Timelapse-Slider
-by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
-[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [github](https://github.com/jtByt-Pictures)  
-**hardware documentation**  
+# Arduino - timelapse-slider
+by Jannik Beyerstedt from Hamburg, Germany  
+[jannikbeyerstedt.de](http://jannikbeyerstedt.de) | [Github](https://github.com/jbeyerstedt)  
+**license:** GNU GPL v3
 
-
-#### about this 
+## Hardware Documentation 
 This is the documentation for the technical drawings and all the hardware.
 all the technical drawings are specific to the parts I used. If you use other parts, some measurements must be changed.  
 
