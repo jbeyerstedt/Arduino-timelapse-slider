@@ -1,21 +1,22 @@
-# Arduino-timelapse-slider
-by jtByt.Pictures, Jannik Beyerstedt from Hamburg, Germany  
-[jannik.beyerstedt.de](http://jannik.beyerstedt.de) | [Github](https://github.com/jbeyerstedt)  
-**software documentation**  
+# Arduino - timelapse-slider
+by Jannik Beyerstedt from Hamburg, Germany  
+[jannikbeyerstedt.de](http://jannikbeyerstedt.de) | [Github](https://github.com/jbeyerstedt)  
+**license:** GNU GPL v3
 
+## Software Documentation
 
 #### about this document  
 This readme contains the introduction of the project, changelog and the **user manual** for the code/ software. Check also the "hardware_readme.md" and "electronics_readme.md".
 
 
-## introduction
+## Introduction
 I'm beginning shooting time lapses with my DSLR camera and wanted to have a slider for more interesting camera movements in my time lapses. So I began to write some code for the Arduino UNO board to control a stepper motor and the trigger of my camera.
 To control this little thing I will use three buttons and two 7 digit displays.
 
 You can find photos I made and in the future also videos on my website [jtByt-Pictures.de](http://jtByt-Pictures.de "my homepage").
 
 
-## user manual  
+## User Manual  
 #### general information
 1. the total slide time influences the sliding speed!
 
@@ -59,7 +60,7 @@ Symbols:
 - . -> idle/ manual drive possible
  
 
-## setup manual
+## Setup Manual
 This will explain the options that can be set in the config.h file. But it´s quite well commented in the file itself as well.  
 more follows soon / mehr folgt bald  
 
@@ -99,7 +100,7 @@ more follows soon / mehr folgt bald
 
 
 
-## changelog
+## Changelog
 * 1.0.1:
 	* setSlideTime=0 will get an division through 0 in the calculation which causes malfunction (because stepsPerInterval will be 0)
 	* corrected the calculation of the stepsPerInterval at high speed / setSlideTime < 3 / calculated stepsPerSecond < than the highest possible speed
